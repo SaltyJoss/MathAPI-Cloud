@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>MathAPI Cloud Client</title>
+    <link rel="stylesheet" href="styles/base.css">
+    <link rel="stylesheet" href="styles/layout.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/models.css">
+</head>
+
+<body>
+
+    <div id="header"></div>
+
+        <script>
+            fetch("partials/header.html")
+            .then(r => r.text())
+            .then(html => {
+                document.getElementById("header").innerHTML = html;
+
+                // now the burger exists, attach handler
+                const burger = document.getElementById("qlBurger");
+                const links  = document.getElementById("qlLinks");
+
+                if (burger && links) {
+                burger.addEventListener("click", () => {
+                    links.classList.toggle("show");
+                });
+                }
+            });
+        </script>
+
+    <section class="hero hero--small hero--compact">
+        <div class="hero-fx">
+            <div class="blob blob-blue"></div>
+            <div class="blob blob-purple"></div>
+            <div class="blob blob-green"></div>
+        </div>
+
+        <div class="hero-inner">
+            <p class="tag">Computational Models</p>
+            <h1>Algebra • Calculus • Vectors • Matrices</h1>
+            <p class="subtext">
+                Evaluate mathematical expressions, linear algebra utilities, and ODE solvers directly in the browser.
+            </p>
+        </div>
+    </section>
+
+    <div class="model-panel">
+        <div class="models-grid">
+            <div class="left">
+                <!-- ALGEBRA -->
+                <div id="algebraBlock" class="model-block collapsed">
+                    <h3 class="model-title" onclick="toggleModel('algebraBlock')">Algebra Models</h3>
+
+                    <div class="model-content">
+                        <div class="input-row">
+                            <label>A:</label>
+                            <input id="a" type="number" placeholder="3">
+
+                            <label>B:</label>
+                            <input id="b" type="number" placeholder="7">
+                        </div>
+
+                        <div class="action-row">
+                            <button onclick="algebra('add')">Add</button>
+                            <button onclick="algebra('subtract')">Subtract</button>
+                            <button onclick="algebra('multiply')">Multiply</button>
+                            <button onclick="algebra('divide')">Divide</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- ODE -->
+                <div id="odeBlock" class="model-block collapsed">
+                    <h3 class="model-title" onclick="toggleModel('odeBlock')">Numerical Integrator Models</h3>
+
+                    <div class="model-content">
+                        <div class="input-row">
+                            <label>Function:</label>
+                            <select id="func">
+                                <option value="tplusy">t + y</option>
+                                <option value="linear">2·y</option>
+                                <option value="sin">sin(t)</option>
+                                <option value="exp">exp(t)</option>
+                                <option value="quad">y²</option>
+                                <option value="logistic">logistic</option>
+                                <option value="harmonic">-t</option>
+                                <option value="damped">-0.3y</option>
+                                <option value="tcosy">t·cos(y)</option>
+                                <option value="cubic">y³-y</option>
+                                <option value="forced">sin(t)-y</option>
+                                <option value="mix">exp(t) + y</option>
+                            </select>
+
+                            <label>y₀=</label>
+                            <input id="y0" type="number" placeholder="1">
+
+                            <label>t₀=</label>
+                            <input id="t0" type="number" placeholder="0">
+
+                            <label>dt=</label>
+                            <input id="dt" type="number" placeholder="0.01">
+
+                            <label>n=</label>
+                            <input id="n" type="number" placeholder="25">
+                        </div>
+
+                        <div class="action-row">
+                            <button onclick="calc('Euler')">Euler</button>
+                            <button onclick="calc('Heuns')">Heuns</button>
+                            <button onclick="calc('RK2')">RK2</button>
+                            <button onclick="calc('RK4')">RK4</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VECTORS -->
+                <div id="vectorsBlock" class="model-block collapsed">
+                    <h3 class="model-title" onclick="toggleModel('vectorsBlock')">Vector Models</h3>
+
+                    <div class="model-content">
+                        <div class="input-row">
+                            <label>Vector A:</label>
+                            <input id="vA" type="text" placeholder="1,2,3">
+
+                            <label>Vector B:</label>
+                            <input id="vB" type="text" placeholder="4,5,6">
+                        </div>
+
+                        <div class="action-row">
+                            <button onclick="vector('dot')">Dot Product</button>
+                            <button onclick="vector('add')">Add</button>
+                            <button onclick="vector('subtract')">Subtract</button>
+                            <button onclick="vector('scale')">Scale</button>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- MATRICES -->
+                <div id="matricesBlock" class="model-block collapsed">
+                    <h3 class="model-title" onclick="toggleModel('matricesBlock')">Matrix Models</h3>
+
+                    <div class="model-content">
+                        <div class="input-row">
+                            <label>Matrix A:</label>
+                            <input id="mA" type="text" placeholder="1,2;3,4">
+
+                            <label>Matrix B:</label>
+                            <input id="mB" type="text" placeholder="5,6;7,8">
+                        </div>
+
+                        <div class="action-row">
+                            <button onclick="matrix('determinant')">Determinant</button>
+                            <button onclick="matrix('transpose')">Transpose</button>
+                            <button onclick="matrix('add')">Add</button>
+                            <button onclick="matrix('multiply')">Multiply</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT SIDE -->
+            <div class="right">
+                <div class="output-block">
+                    <h3 class="output-title">Output</h3>
+                    <textarea id="output" readonly></textarea>
+                </div>
+
+                <div class="output-block">
+                    <h3 class="output-title">Output History</h3>
+                    <textarea id="history" readonly></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="scripts/models.js"></script>
+    <script src="scripts/particles.js"></script>
+    <script src="/_framework/aspnetcore-browser-refresh.js"></script>
+</body>
+</html>

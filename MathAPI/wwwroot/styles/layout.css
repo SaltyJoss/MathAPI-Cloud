@@ -1,0 +1,332 @@
+/****************************
+ QUANTUM-STYLE HEADER
+*****************************/
+.ql-nav {
+    position: fixed;    /* follows Quantum style */
+    top: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    
+    width: min(92vw, 1600px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    pointer-events: none;
+}
+
+.ql-nav-inner {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    pointer-events: auto;
+}
+
+/* === LOGO === */
+.ql-logo {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+}
+
+/* ===== LOGO ICON ===== */
+.ql-logo-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    
+    /* main gradient */
+    background: linear-gradient(135deg, #4da3ff 10%, #a86bff 90%);
+
+    /* pseudo-3D gloss */
+    box-shadow:
+        0 4px 14px rgba(60, 80, 200, 0.45),
+        inset 0 1px 3px rgba(255,255,255,0.4),
+        inset 0 -2px 6px rgba(0,0,0,0.35),
+        0 0 10px rgba(120,140,255,0.6);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    line-height: 1;
+
+    font-weight: 900;
+    font-size: 1.35rem;
+    color: white;
+
+    /* glassy layer */
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    position: relative;
+    overflow: hidden;
+}
+
+.ql-logo-icon span {
+    font-weight: 1000;      /* bold */
+    font-size: 1.75rem;     /* scale if desired */
+    position: relative;    /* keeps centering tweak possible */
+    top: -4px;              /* optional optical nudge */
+}
+
+/* ===== LOGO TEXT ===== */
+.ql-logo-text {
+    font-size: 1.45rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+
+    /* gradient to text */
+    background: linear-gradient(90deg, #4da3ff, #a86bff);
+    -webkit-background-clip: text;
+    color: transparent;
+
+    /* subtle underline like QuantumLeap */
+    position: relative;
+}
+
+.ql-logo-icon::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 45%;
+    border-radius: inherit;
+
+    background: linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.35),
+        rgba(255,255,255,0.05)
+    );
+    pointer-events: none;
+}
+
+.ql-logo-text::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -3px;
+    height: 3px;
+    border-radius: 3px;
+    background: linear-gradient(90deg, #4da3ff, #a86bff);
+    opacity: 0.65;
+}
+
+/* === DESKTOP LINKS === */
+/* Always hide link list by default */
+.ql-links {
+    display: none;
+    flex-direction: column;
+    gap: 1rem;
+
+    position: absolute;
+    right: 2rem;
+    top: 70px;
+
+    background: rgba(10,12,18,0.85);
+    padding: 1.2rem 1.5rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.07);
+    backdrop-filter: blur(12px);
+    opacity: 0;
+    transform: translate(-50%, -5px);
+    transition: 0.18s ease;
+}
+
+/* When opened via JS */
+.ql-links.show {
+    display: flex;
+    opacity: 1;
+    transform: translate(65%, 0);
+}
+
+.ql-links a {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: rgba(255,255,255,0.85);
+    text-decoration: none;
+    transition: 0.15s;
+}
+
+.ql-links a:hover {
+    color: #4da3ff;
+}
+
+.ql-menu-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* === BURGER === */
+/* Burger visible on all sizes */
+.ql-burger {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    width: 36px;
+    height: 36px;
+    justify-content: center;
+    align-items: center;
+
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(6px);
+
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.ql-burger:hover {
+    border-color: #4da3ff;
+}
+
+.ql-burger span {
+    width: 18px;
+    height: 2px;
+    background: rgba(255,255,255,0.9);
+    border-radius: 2px;
+}
+
+/* MOBILE DROPDOWN */
+@media (max-width: 800px) {
+
+    .ql-links {
+        display: none;
+        position: absolute;
+
+        top: calc(100% + 0.4rem);
+
+        left: 50%;                /* ✅ center anchor */
+        transform: translateX(-50%); /* ✅ center offset */
+
+        flex-direction: column;
+        gap: 1rem;
+
+        background: rgba(10,12,18,0.85);
+        padding: 1.2rem 1.5rem;
+        border-radius: 12px;
+        border: 1px solid rgba(255,255,255,0.07);
+        backdrop-filter: blur(12px);
+        z-index: 99;
+    }
+
+    .ql-links.show {
+        display: flex;
+    }
+
+    .ql-burger {
+        display: flex;
+    }
+}
+
+/* Grid shimmer */
+@keyframes grid-warp {
+    0%   { background-position: 0 0, 0 0, 0 0; }
+    50%  { background-position: 6px 4px, -6px -4px, 4px -6px; }
+    100% { background-position: 0 0, 0 0, 0 0; }
+}
+
+.hero {
+    position: relative;
+    margin: 3rem auto;
+    padding: 3rem 3.5rem;
+
+    max-width: 900px;
+    border-radius: 20px;
+
+    /* translucent glass shell */
+    background: rgba(15, 20, 36, 0.6);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+
+    /* holographic border */
+    border: 1px solid rgba(255,255,255,0.09);
+    box-shadow:
+        0 20px 40px rgba(0,0,0,0.9),
+        0 0 25px rgba(120,140,255,0.15);
+}
+
+/* grid texture layered OVER the blur */
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+
+    background-image:
+        linear-gradient(rgba(255,255,255,0.04) 1px, transparent 0.3px),
+        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 0.3px),
+        radial-gradient(circle at 30% 25%, rgba(80,120,255,0.18), transparent 50%);
+
+    background-size:
+        22px 22px,
+        22px 22px,
+        auto;
+}
+
+/* floating glow blobs */
+.hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+
+    background:
+        radial-gradient(circle at 80% 30%, rgba(144,80,255,0.35), transparent 70%),
+        radial-gradient(circle at 20% 80%, rgba(40,200,255,0.25), transparent 70%);
+    filter: blur(60px);
+    opacity: 0.65;
+}
+
+/* heading text gradient */
+.hero h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    font-weight: 800;
+    letter-spacing: -1px;
+    text-align: center;
+
+    background: linear-gradient(90deg,#4da3ff,#a86bff,#e178ff);
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+.hero .subtext {
+    text-align: center;
+    max-width: 550px;
+    margin: 0 auto 1.6rem auto;
+    opacity: .85;
+}
+
+/* optional size variant */
+.hero.small {
+    padding: 2.75rem;
+    max-width: 800px;
+}
+
+/* Glow blobs */
+.blob {
+    position:absolute;
+    width:350px;
+    height:350px;
+    border-radius:50%;
+    filter:blur(120px);
+    opacity:.25;
+}
+
+.tag {
+    font-size: 1.5rem;
+    font-weight: bold;
+    padding: 0.45rem 1rem;
+    border-radius: 100px;
+    border: 1px solid rgba(255,255,255,0.12);
+    color: rgba(255,255,255,0.85);
+    background: rgba(255,255,255,0.07);
+}

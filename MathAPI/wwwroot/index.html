@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>MathAPI — Home</title>
+    <link rel="stylesheet" href="styles/base.css">
+    <link rel="stylesheet" href="styles/layout.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/home.css">
+</head>
+<body class="page-home">
+
+    <div id="header"></div>
+
+        <script>
+            fetch("partials/header.html")
+            .then(r => r.text())
+            .then(html => {
+                document.getElementById("header").innerHTML = html;
+
+                // now the burger exists, attach handler
+                const burger = document.getElementById("qlBurger");
+                const links  = document.getElementById("qlLinks");
+
+                if (burger && links) {
+                burger.addEventListener("click", () => {
+                    links.classList.toggle("show");
+                });
+                }
+            });
+        </script>
+
+    <section class="hero hero-panel">
+        <div class="hero-inner">
+            <p class="tag">Cloud-Hosted Mathematics</p>
+            <h1>Deploy • Compute • Explore</h1>
+            <p class="subtext">
+                Numerical models, linear algebra, differential equations...
+            </p>
+
+            <div class="hero-fx">
+                <div class="blob blob-blue"></div>
+                <div class="blob blob-purple"></div>
+                <div class="blob blob-green"></div>
+            </div>
+
+            <button class="cta" onclick="location.href='models.html'">
+                Launch Models
+            </button>
+        </div>
+    </section>
+    <script src="scripts/particles.js"></script>
+    <script src="/_framework/aspnetcore-browser-refresh.js"></script>
+</body>
+</html>

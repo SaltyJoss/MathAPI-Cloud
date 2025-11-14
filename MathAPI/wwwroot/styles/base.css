@@ -1,0 +1,44 @@
+
+/* THEME */
+:root {
+    --bg: rgb(33,33,33);
+    --fg: rgb(255, 255, 255);
+    --accent: #4da3ff;
+    --mid: rgb(70,70,70);
+}
+
+body {
+    margin: 0;
+    background: radial-gradient(circle at 50% 50%, #181e2b, #0a0c11);
+    color: var(--fg);
+    font-family: 'Manrope', sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* particle base */
+.particle {
+    position: absolute;
+    border-radius: 60%;
+    background: var(--accent, #ffffff);
+    opacity: 0.5;
+    filter: blur(1.2px);
+    pointer-events: none;
+    animation: floatParticle linear forwards;
+}
+
+/* smoother motion + fade */
+@keyframes floatParticle {
+    0% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    80% {
+        opacity: 0.5;
+    }
+    100% {
+        transform: translateY(-20px);
+        opacity: 0.1;
+    }
+}

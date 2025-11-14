@@ -1,0 +1,6 @@
+@MathAPI_HostAddress = http://localhost:5130
+
+GET {{MathAPI_HostAddress}}/mathapi/
+Accept: application/json
+
+###
