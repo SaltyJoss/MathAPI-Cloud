@@ -16,20 +16,20 @@ namespace MathAPI.Controllers
         public IActionResult AddVectors(VectorRequest request)
         {
             var result = LinearAlgebra.AddVectors(request.VectorA, request.VectorB).ToArray();
-            return Ok(new { Result = result });
+            return Ok(new { result });
         }
 
         [HttpPost("subtract")]
         public IActionResult SubtractVectors(VectorRequest request)
         {
             var result = LinearAlgebra.SubtractVectors(request.VectorA, request.VectorB).ToArray();
-            return Ok(new { Result = result });
+            return Ok(new { result });
         }
         [HttpPost("dot")]
         public IActionResult CalculateDotProduct(VectorRequest request)
         {
-            double dotProduct = LinearAlgebra.DotProduct(request.VectorA, request.VectorB);
-            return Ok(new { DotProduct = dotProduct });
+            double result = LinearAlgebra.DotProduct(request.VectorA, request.VectorB);
+            return Ok(new { result });
         }
     }
 }

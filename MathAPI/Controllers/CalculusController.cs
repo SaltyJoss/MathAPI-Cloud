@@ -36,7 +36,7 @@ namespace MathAPI.Controllers
         public IActionResult SolveODEWithEuler(ODERequest request)
         {
             var result = ODE.EulerMethod((t, y) => F(request.func, t, y), request.y0, request.t0, request.dt, request.n);
-            return Ok(new { Result = result });
+            return Ok(new { result });
         }
 
         // POST endpoint to solve ODE using Improved Euler method
@@ -44,7 +44,7 @@ namespace MathAPI.Controllers
         public IActionResult SolveODEWithImprovedEuler(ODERequest request)
         {
             var result = ODE.ImprovedEulerMethod((t, y) => F(request.func, t, y), request.y0, request.t0, request.dt, request.n);
-            return Ok(new { Result = result });
+            return Ok(new { result });
         }
 
         // POST endpoint to solve ODE using RK2 method
@@ -52,7 +52,7 @@ namespace MathAPI.Controllers
         public IActionResult SolveODEWithRK2(ODERequest request)
         {
             var result = ODE.RK2((t, y) => F(request.func, t, y), request.y0, request.t0, request.dt, request.n);
-            return Ok(new { Result = result });
+            return Ok(new { result });
         }
 
         // POST endpoint to solve ODE using RK4 method
@@ -60,7 +60,7 @@ namespace MathAPI.Controllers
         public IActionResult SolveODEWithRK4(ODERequest request)
         {
             var result = ODE.RK4((t, y) => F(request.func, t, y), request.y0, request.t0, request.dt, request.n);
-            return Ok(new { Result = result });
+            return Ok(new { result });
         }
     }
 }

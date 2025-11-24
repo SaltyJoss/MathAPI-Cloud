@@ -36,10 +36,9 @@ async function algebra(method) {
     });
 
     const data = await resp.json();
-    const text = `Algebra | ${method}(${a}, ${b}) = ${data.result}`;
 
     writeOutput("Result: " + data.result);
-    appendHistory("Algebra | " + method + " => " + data.result);
+    appendHistory(`Algebra | ${method}(${a}, ${b}) => ${JSON.stringify(data.result)}`);
 }
 
 /* CALCULUS API */
@@ -58,10 +57,9 @@ async function calc(method) {
     });
 
     const data = await resp.json();
-    const text = `ODE | ${method}(${func}, y0=${y0}, t0=${t0}, dt=${dt}, n=${n}) = ${data.result}`;
 
     writeOutput("Result: " + data.result);
-    appendHistory("ODE | " + method + " " + func + " => " + JSON.stringify(data.result));
+    appendHistory(`ODE | ${method} ${func} => ${JSON.stringify(data.result)}`);
 }
 
 /* VECTOR API */
@@ -85,11 +83,8 @@ async function vector(method) {
 
     const data = await resp.json();
 
-    // dot endpoint returns DotProduct instead of Result
-    const result = data.Result ?? data.DotProduct;
-
-    writeOutput("Result: " + JSON.stringify(result));
-    appendHistory("Vector | " + method + " => " + JSON.stringify(result));
+    writeOutput("Result: " + data.result); 
+    appendHistory(`Vector | ${method} => ${JSON.stringify(data.result)}`);
 }
 
 /* MATRIX API */
@@ -102,24 +97,33 @@ function parseMatrix(str) {
 
 async function matrix(method) {
     const rawA = document.getElementById("mA").value;
-    const rawB = document.getElementById("mB").value;
+    const operandType = document.getElementById("opType").value;
 
     const matrixA = parseMatrix(rawA);
-    const matrixB = rawB ? parseMatrix(rawB) : null;
-
-    let payload = { matrixA };  // matches MatrixRequest.MatrixA
+    let payload = { matrixA };  // default payload
 
     if (method === "add") {
-        payload.matrixB = matrixB;
+        if (operandType !== "matrix") {
+             writeOutput("Error: Matrix Addition requires a Matrix B");
+            return;
+        }
+        payload.matrixB = parseMatrix(document.getElementById("mB").value);
     }
-
-    // TODO: implement multiply with vector (code created using different sources)
     // if (method === "multiply") {
     //     const vecStr = prompt("Enter vector (e.g. 1,2):");
     //     const vector = vecStr.split(",").map(x => Number(x.trim()));
     //     payload.vector = vector;
     // }
     // I  believe this is logically correct, but my API does not support it yet
+
+    if (method === "multiply") {
+        if (operandType === "matrix") {
+            payload.matrixB = parseMatrix(document.getElementById("mB").value);
+            
+        } else {
+            payload.vector = parseVector(document.getElementById("mVec").value);
+        }
+    }
 
     const resp = await fetch(`${BASE}/linearalgebra/matrix/${method}`, {
         method: "POST",
@@ -128,28 +132,16 @@ async function matrix(method) {
     });
 
     const data = await resp.json();
-
-    let result;
-    switch (method) {
-        case "determinant":
-            result = data.determinant;
-            break;
-        case "transpose":
-            result = data.transpose;
-            break;
-        case "add":
-            result = data.result;
-            break;
-        case "multiply":
-            result = data.matrixMultiply;
-            break;
-    }
+    const result = data.result;
 
     writeOutput("Result: " + JSON.stringify(result));
-    appendHistory(`Matrix | ${method} = ${JSON.stringify(result)}`);
+    appendHistory(`Matrix | ${method} => ${JSON.stringify(result)}`);
 }
 
+// UI Interactions
 document.addEventListener("DOMContentLoaded", () => {
+
+    // COLLAPSIBLE MODEL PANELS
     const titles = document.querySelectorAll(".model-title");
 
     titles.forEach(t => {
@@ -158,4 +150,25 @@ document.addEventListener("DOMContentLoaded", () => {
             block.classList.toggle("collapsed");
         });
     });
+
+    // MATRIX OPERAND SWITCH
+    const op = document.getElementById("opType");
+    const matB = document.getElementById("matB-block");
+    const vec = document.getElementById("vec-block");
+
+    console.log("Loaded:", op, matB, vec); // debugging so I can see if elements are found (or NOT)
+
+    if (op && matB && vec) {
+        op.addEventListener("change", () => {
+            if (op.value === "vector") {
+                matB.style.display = "none";
+                vec.style.display = "block";
+            } else {
+                matB.style.display = "block";
+                vec.style.display = "none";
+            }
+        });
+    } else {
+        console.warn("[WARN] Matrix operand DOM elements NOT FOUND."); // more debugging 
+    }
 });

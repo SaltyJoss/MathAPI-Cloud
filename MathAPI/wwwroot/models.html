@@ -147,8 +147,22 @@
                             <label>Matrix A:</label>
                             <input id="mA" type="text" placeholder="1,2;3,4">
 
-                            <label>Matrix B:</label>
-                            <input id="mB" type="text" placeholder="5,6;7,8">
+                            <label>Operand Type:</label>
+                            <select id="opType">
+                                <option value="matrix">Matrix</option>
+                                <option value="vector">Vector</option>
+                            </select>
+                            
+                            <div id="matB-block">
+                                <label>Matrix B:</label>
+                                <input id="mB" type="text" placeholder="5,6;7,8">
+                            </div>
+
+                            <div id="vec-block" style="display:none;">
+                                <label>Vector v:</label>
+                                <input id="mVec" type="text" placeholder="1,2">
+                            </div>
+
                         </div>
 
                         <div class="action-row">
