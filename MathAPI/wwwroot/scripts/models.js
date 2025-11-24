@@ -1,15 +1,15 @@
 const BASE = window.location.origin;
 
 function showModel(name) {
-    const sections = ["algebra", "ode", "vectors", "matrices"];
+    const sections = ["algebraBlock", "odeBlock", "vectorsBlock", "matricesBlock"];
 
     sections.forEach(sec => {
         const block = document.getElementById(sec);
         block.classList.toggle("collapsed", sec !== name);
     });
 
-    document.querySelectorAll(".tabs span").forEach(el => {
-        el.classList.toggle("active", el.textContent.toLowerCase().includes(name));
+    document.querySelectorAll(".tabs span").
+        forEach(el => {el.classList.toggle("active", el.textContent.toLowerCase().includes(name));
     });
 }
 
@@ -39,7 +39,7 @@ async function algebra(method) {
     const text = `Algebra | ${method}(${a}, ${b}) = ${data.result}`;
 
     writeOutput("Result: " + data.result);
-    appendHistory("Result: " + data.result);
+    appendHistory("Algebra | " + method + " => " + data.result);
 }
 
 /* CALCULUS API */
@@ -61,61 +61,92 @@ async function calc(method) {
     const text = `ODE | ${method}(${func}, y0=${y0}, t0=${t0}, dt=${dt}, n=${n}) = ${data.result}`;
 
     writeOutput("Result: " + data.result);
-    appendHistory("Result: " + data.result);
-}
-
-function parseVector(str) {
-    return str.split(",").map(Number);
+    appendHistory("ODE | " + method + " " + func + " => " + JSON.stringify(data.result));
 }
 
 /* VECTOR API */
+
+function parseVector(str) {
+    return str.split(",").map(n => Number(n.trim()));
+}
 
 async function vector(method) {
     const A = parseVector(document.getElementById("vA").value);
     const B = parseVector(document.getElementById("vB").value);
 
-    const resp = await fetch(`${BASE}/vectors/${method}`, {
+    const resp = await fetch(`${BASE}/linearalgebra/vector/${method}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ A, B })
+        body: JSON.stringify({
+            vectorA: A,
+            vectorB: B
+        })
     });
 
     const data = await resp.json();
-    const text = `Vector | ${method}([${A}], [${B}]) = ${data.result}`;
 
-    writeOutput("Result: " + data.result);
-    appendHistory(text);
-}
+    // dot endpoint returns DotProduct instead of Result
+    const result = data.Result ?? data.DotProduct;
 
-function parseMatrix(str) {
-    return str.split(";").map(
-        row => row.split(",").map(Number)
-    );
+    writeOutput("Result: " + JSON.stringify(result));
+    appendHistory("Vector | " + method + " => " + JSON.stringify(result));
 }
 
 /* MATRIX API */
 
-async function matrix(method) {
-    const A = parseMatrix(document.getElementById("mA").value);
-    let payload = { A };
+function parseMatrix(str) {
+    return str.split(";").map(row =>
+        row.split(",").map(n => Number(n.trim()))
+    );
+}
 
-    // If method requires two matrices, include B
-    if (method === "add" || method === "multiply") {
-        const B = parseMatrix(document.getElementById("mB").value);
-        payload = { A, B };
+async function matrix(method) {
+    const rawA = document.getElementById("mA").value;
+    const rawB = document.getElementById("mB").value;
+
+    const matrixA = parseMatrix(rawA);
+    const matrixB = rawB ? parseMatrix(rawB) : null;
+
+    let payload = { matrixA };  // matches MatrixRequest.MatrixA
+
+    if (method === "add") {
+        payload.matrixB = matrixB;
     }
 
-    const resp = await fetch(`${BASE}/matrices/${method}`, {
+    // TODO: implement multiply with vector (code created using different sources)
+    // if (method === "multiply") {
+    //     const vecStr = prompt("Enter vector (e.g. 1,2):");
+    //     const vector = vecStr.split(",").map(x => Number(x.trim()));
+    //     payload.vector = vector;
+    // }
+    // I  believe this is logically correct, but my API does not support it yet
+
+    const resp = await fetch(`${BASE}/linearalgebra/matrix/${method}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
     });
 
     const data = await resp.json();
-    const text = `Matrix | ${method}(${JSON.stringify(payload)}) = ${JSON.stringify(data.result)}`;
 
-    writeOutput("Result: " + JSON.stringify(data.result));
-    appendHistory(text);
+    let result;
+    switch (method) {
+        case "determinant":
+            result = data.determinant;
+            break;
+        case "transpose":
+            result = data.transpose;
+            break;
+        case "add":
+            result = data.result;
+            break;
+        case "multiply":
+            result = data.matrixMultiply;
+            break;
+    }
+
+    writeOutput("Result: " + JSON.stringify(result));
+    appendHistory(`Matrix | ${method} = ${JSON.stringify(result)}`);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -128,4 +159,3 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 });
-

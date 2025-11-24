@@ -13,7 +13,7 @@ namespace MathAPI.Controllers
 
 
         // POST endpoint to calculate the determinant of a matrix
-        [HttpPost("det")]
+        [HttpPost("determinant")]
         public IActionResult CalculateDeterminant(MatrixRequest request)
         {
             double determinant = LinearAlgebra.Determinant(request.MatrixA);
