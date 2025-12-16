@@ -1,5 +1,4 @@
 ﻿using MathCore;
-using MathNet.Numerics.Providers.LinearAlgebra;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MathAPI.Controllers
