@@ -49,7 +49,7 @@ async function postJson(url, payload) {
     }
 
     if (!resp.ok) {
-        // 🔑 Handle ASP.NET validation errors properly
+        // Handle ASP.NET validation errors properly
         if (data?.errors) {
             const fields = Object.keys(data.errors);
             throw new Error(`Missing or invalid input: ${fields.join(", ")}`);
