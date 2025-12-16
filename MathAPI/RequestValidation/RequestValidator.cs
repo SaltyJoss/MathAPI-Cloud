@@ -6,16 +6,25 @@ namespace MathAPI.RequestValidation
     // Static class for validating request parameters, added after deployment due to realisation of need for robust validation!
     public static class RequestValidator
     {
+        // Set of valid ODE function names.
+        private static readonly HashSet<string> AllowedFuncs = new()
+        {
+            "tplusy", "linear", "sin", "exp", "quad", "logistic",
+            "harmonic", "damped", "tcosy", "cubic", "forced", "mix"
+        };
+
+        // Validates ODERequest parameters.
         public static IActionResult? ValidateODERequest(ODERequest req)
         {
             if (req is null) return new BadRequestObjectResult("Request body is required.");
+            if (string.IsNullOrWhiteSpace(req.func)) return new BadRequestObjectResult("func is required.");
+            if (!AllowedFuncs.Contains(req.func)) return new BadRequestObjectResult($"Unknown ODE function '{req.func}'.");
             if (req.y0 is null) return new BadRequestObjectResult("y0 is required.");
             if (req.t0 is null) return new BadRequestObjectResult("t0 is required.");
             if (req.dt is null) return new BadRequestObjectResult("dt is required.");
             if (req.n is null) return new BadRequestObjectResult("n is required.");
             if (req.dt <= 0) return new BadRequestObjectResult("dt must be > 0.");
             if (req.n <= 0) return new BadRequestObjectResult("n must be > 0.");
-            if (string.IsNullOrWhiteSpace(req.func)) return new BadRequestObjectResult("Some function is required.");
             return null;
         }
 

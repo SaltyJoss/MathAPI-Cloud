@@ -9,25 +9,22 @@ namespace MathAPI.Controllers
     public class CalculusController : Controller
     {
         // Select ODE by name
-        private static double F(string name, double t, double y)
+        private static double F(string name, double t, double y) => name.ToLowerInvariant() switch
         {
-            return name.ToLower() switch
-            {
-                "tplusy" => t + y,
-                "linear" => 2 * y,
-                "sin" => Math.Sin(t),
-                "exp" => Math.Exp(t),
-                "quad" => y * y,
-                "logistic" => y * (1 - y / 10.0),
-                "harmonic" => -t,
-                "damped" => -0.3 * y,
-                "tcosy" => t * Math.Cos(y),
-                "cubic" => (y * y * y) - y,
-                "forced" => Math.Sin(t) - y,
-                "mix" => Math.Exp(t) + y,
-                _ => throw new ArgumentException($"Unknown ODE function '{name}'")
-            };
-        }
+            "tplusy" => t + y,
+            "linear" => 2 * y,
+            "sin" => Math.Sin(t),
+            "exp" => Math.Exp(t),
+            "quad" => y * y,
+            "logistic" => y * (1 - y / 10.0),
+            "harmonic" => -t,
+            "damped" => -0.3 * y,
+            "tcosy" => t * Math.Cos(y),
+            "cubic" => (y * y * y) - y,
+            "forced" => Math.Sin(t) - y,
+            "mix" => Math.Exp(t) + y,
+            _ => 0.0
+        };
 
         // POST endpoint to solve ODE using Euler's method
         [HttpPost("Euler")]

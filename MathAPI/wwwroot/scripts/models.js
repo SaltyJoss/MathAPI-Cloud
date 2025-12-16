@@ -1,3 +1,6 @@
+console.log("RUNNING main.js v2025-12-16-1");
+
+/* BASE URL */
 const BASE = window.location.origin;
 
 function showModel(name) {
@@ -13,86 +16,146 @@ function showModel(name) {
     });
 }
 
+/* OUTPUT & HISTORY HANDLING */
 function writeOutput(text) {
     document.getElementById("output").value = text;
 }
 
+/* APPEND TO HISTORY */
 function appendHistory(text) {
     const h = document.getElementById("history");
     h.value += text + "\n";
     h.scrollTop = h.scrollHeight;
 }
 
+/* POST JSON FUNCTION */
+async function postJson(url, payload) {
+  const resp = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+
+  let data = null;
+  try { data = await resp.json(); } catch { /* ignore */ }
+
+  if (!resp.ok) {
+    const msg = (data && (data.message ?? data.error)) ?? `HTTP ${resp.status}`;
+    throw new Error(msg);
+  }
+  return data;
+}
+
 /* ALGEBRA API */
 
 async function algebra(method) {
-    const a = parseFloat(document.getElementById("a").value);
-    const b = parseFloat(document.getElementById("b").value);
+    const a = Number(aInput.value);
+    const b = Number(bInput.value);
 
-    const resp = await fetch(`${BASE}/algebra/${method}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ a, b })
-    });
+    if (!Number.isFinite(a) || !Number.isFinite(b)) {
+        const msg = "Error: a and b must be valid numbers.";
+        writeOutput(msg);
+        return;
+    }
 
-    const data = await resp.json();
-
-    writeOutput("Result: " + data.result);
-    appendHistory(`Algebra | ${method}(${a}, ${b}) => ${JSON.stringify(data.result)}`);
+    try {
+        const data = await postJson("/algebra/add", { a, b });
+        writeOutput(`Result: ${data.result}`);
+        appendHistory(`Algebra | ${method}(${a}, ${b}) => ${data.result}`);
+    } catch (e) {
+        const msg = e.message ?? "Unknown error";
+        writeOutput(`Error: ${msg}`);
+        appendHistory(`Algebra | ${method}(${a}, ${b}) => Error: ${msg}`);
+    }
 }
 
 /* CALCULUS API */
 
 async function calc(method) {
-    const func = document.getElementById("func").value;
-    const y0 = parseFloat(document.getElementById("y0").value);
-    const t0 = parseFloat(document.getElementById("t0").value);
-    const dt = parseFloat(document.getElementById("dt").value);
-    const n = parseInt(document.getElementById("n").value);
+    const func = funcInput.value.trim();
+    const y0 = Number(y0Input.value);
+    const t0 = Number(t0Input.value);
+    const dt = Number(dtInput.value);
+    const n  = Number(nInput.value);
 
-    const resp = await fetch(`${BASE}/calculus/${method}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ func, y0, t0, dt, n })
-    });
+    if (!func || !Number.isFinite(y0) || !Number.isFinite(t0) || !Number.isFinite(dt) || !Number.isFinite(n)) {
+        const msg = "Error: func, y0, t0, dt, n are required.";
+        writeOutput(msg);
+        appendHistory(`ODE | ${method.toUpperCase()}, ${func || "(missing)"} => ${msg}`);
+        return;
+    }
+    if (dt <= 0 || n < 1) {
+        const msg = "Error: dt must be > 0 and n must be >= 1.";
+        writeOutput(msg);
+        appendHistory(`ODE | ${method.toUpperCase()}, ${func} => ${msg}`);
+        return;
+    }
 
-    const data = await resp.json();
-
-    writeOutput("Result: " + data.result);
-    appendHistory(`ODE | ${method} ${func} => ${JSON.stringify(data.result)}`);
+    try {
+        const data = await postJson(`/calculus/${method}`, { func, y0, t0, dt, n });
+        writeOutput(`Result: ${JSON.stringify(data.result)}`);
+        appendHistory(`ODE | ${method.toUpperCase()}, ${func} => ${JSON.stringify(data.result)}`);
+    } catch (e) {
+        const msg = e.message ?? "Unknown error";
+        writeOutput(`Error: ${msg}`);
+        appendHistory(`ODE | ${method.toUpperCase()}, ${func} => Error: ${msg}`);
+    }
 }
 
 /* VECTOR API */
 
 function parseVector(str) {
-    return str.split(",").map(n => Number(n.trim()));
+  const s = (str ?? "").trim();
+  if (!s) return null;
+
+  const arr = s.split(",").map(x => Number(x.trim()));
+  if (arr.length === 0 || arr.some(v => !Number.isFinite(v))) return null;
+  return arr;
 }
 
 async function vector(method) {
-    const A = parseVector(document.getElementById("vA").value);
-    const B = parseVector(document.getElementById("vB").value);
+    const A = parseVector(vecAInput.value);
+    const B = parseVector(vecBInput.value);
 
-    const resp = await fetch(`${BASE}/linearalgebra/vector/${method}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            vectorA: A,
-            vectorB: B
-        })
-    });
+    if (!A || !B) {
+        const msg = "Error: invalid vector input (use comma-separated numbers).";
+        writeOutput(msg);
+        appendHistory(`Vector | ${method} => ${msg}`);
+        return;
+    }
+    if (A.length !== B.length) {
+        const msg = "Error: vectors must be the same length.";
+        writeOutput(msg);
+        appendHistory(`Vector | ${method} => ${msg}`);
+        return;
+    }
 
-    const data = await resp.json();
-
-    writeOutput("Result: " + data.result); 
-    appendHistory(`Vector | ${method} => ${JSON.stringify(data.result)}`);
+    try {
+        const data = await postJson(`/linearalgebra/vector/${method}`, { vectorA: A, vectorB: B });
+        writeOutput(`Result: ${JSON.stringify(data.result)}`);
+        appendHistory(`Vector | ${method} => ${JSON.stringify(data.result)}`);
+    } catch (e) {
+        const msg = e.message ?? "Unknown error";
+        writeOutput(`Error: ${msg}`);
+        appendHistory(`Vector | ${method} => Error: ${msg}`);
+    }
 }
 
 /* MATRIX API */
 
 function parseMatrix(str) {
-    return str.split(";").map(row =>
-        row.split(",").map(n => Number(n.trim()))
-    );
+  const s = (str ?? "").trim();
+  if (!s) return null;
+
+  const M = s.split(";").map(row => row.split(",").map(x => Number(x.trim())));
+  if (M.length === 0) return null;
+
+  const cols = M[0].length;
+  if (cols === 0) return null;
+
+  if (M.some(r => r.length !== cols)) return null;                 // rectangular
+  if (M.some(r => r.some(v => !Number.isFinite(v)))) return null;  // numeric only
+  return M;
 }
 
 async function matrix(method) {
@@ -100,6 +163,10 @@ async function matrix(method) {
     const operandType = document.getElementById("opType").value;
 
     const matrixA = parseMatrix(rawA);
+    if (!matrixA) {
+        writeOutput("Error: Invalid Matrix A");
+        return;
+    }
     let payload = { matrixA };  // default payload
 
     if (method === "add") {
@@ -109,12 +176,6 @@ async function matrix(method) {
         }
         payload.matrixB = parseMatrix(document.getElementById("mB").value);
     }
-    // if (method === "multiply") {
-    //     const vecStr = prompt("Enter vector (e.g. 1,2):");
-    //     const vector = vecStr.split(",").map(x => Number(x.trim()));
-    //     payload.vector = vector;
-    // }
-    // I  believe this is logically correct, but my API does not support it yet
 
     if (method === "multiply") {
         if (operandType === "matrix") {
@@ -125,17 +186,18 @@ async function matrix(method) {
         }
     }
 
-    const resp = await fetch(`${BASE}/linearalgebra/matrix/${method}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-    });
-
-    const data = await resp.json();
-    const result = data.result;
-
-    writeOutput("Result: " + JSON.stringify(result));
-    appendHistory(`Matrix | ${method} => ${JSON.stringify(result)}`);
+    try {
+        const data = await postJson(`/linearalgebra/matrix/${method}`, payload);
+        if (!("result" in data)) {
+            throw new Error("Malformed response from API");
+        }
+        writeOutput("Result: " + JSON.stringify(data.result));
+        appendHistory(`Matrix | ${method} => ${JSON.stringify(data.result)}`);
+    } catch (e) {
+        const msg = e.message ?? "Unknown error";
+        writeOutput("Error: " + msg);
+        appendHistory(`Matrix | ${method} => Error: ${msg}`);
+    }
 }
 
 // UI Interactions
