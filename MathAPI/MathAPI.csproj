@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -11,9 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="MathCore">
-      <HintPath>..\MathCore\bin\Debug\net8.0\MathCore.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\MathCore\MathCore.csproj" />
   </ItemGroup>
 
 </Project>
