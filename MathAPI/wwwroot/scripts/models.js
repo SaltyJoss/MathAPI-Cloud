@@ -102,7 +102,7 @@ async function algebra(method) {
     }
 
     try {
-        const data = await postJson("/algebra/add", { a, b });
+        const data = await postJson(`/algebra/${method}`, { a, b });
         writeOutput(`Result: ${data.result}`);
         appendHistory(`Algebra | ${method}(${a}, ${b}) => ${data.result}`);
     } catch (e) {
