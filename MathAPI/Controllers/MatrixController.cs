@@ -1,4 +1,5 @@
-﻿using MathCore;
+﻿using MathAPI.RequestValidation;
+using MathCore;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MathAPI.Controllers
@@ -7,39 +8,56 @@ namespace MathAPI.Controllers
     [Route("linearalgebra/matrix")]
     public class MatrixController : Controller
     {
-        // Request model for matrix operations
-        public record MatrixRequest(double[][] MatrixA, double[][]? MatrixB, double[]? Vector);
-
-
         // POST endpoint to calculate the determinant of a matrix
         [HttpPost("determinant")]
-        public IActionResult CalculateDeterminant(MatrixRequest request)
+        public IActionResult CalculateDeterminant([FromBody] MatrixRequest request)
         {
-            double result = LinearAlgebra.Determinant(request.MatrixA);
+            var errA = RequestValidator.ValidateMatrix(request.MatA, "MatA");
+            if (errA is not null) return errA;
+
+            double result = LinearAlgebra.Determinant(request.MatA!);
             return Ok(new { result });
         }
 
         // POST endpoint to multiply a matrix by a vector
         [HttpPost("multiply")]
-        public IActionResult MatrixMultiply(MatrixRequest request)
+        public IActionResult MatrixMultiply([FromBody] MatrixRequest request)
         {
-            var result = LinearAlgebra.MultiplyMatrixByVector(request.MatrixA, request.Vector!).ToArray();
+            var errA = RequestValidator.ValidateMatrix(request.MatA, "MatA");
+            if (errA is not null) return errA;
+
+            if (request.Vec is null) return BadRequest(new { error = "Vector is required for multiplication operations." });
+            var errV = RequestValidator.ValidateVector(request.Vec, "Vector");
+            if (errV is not null) return errV;
+
+            var result = LinearAlgebra.MultiplyMatrixByVector(request.MatA!, request.Vec!).ToArray();
             return Ok(new { result });
         }
 
         // POST endpoint to add two matrices
         [HttpPost("add")]
-        public IActionResult MatrixAdd(MatrixRequest request)
+        public IActionResult MatrixAdd([FromBody] MatrixRequest request)
         {
-            var result = ToJagged(LinearAlgebra.AddMatrices(request.MatrixA, request.MatrixB!).ToArray());
+            var errA = RequestValidator.ValidateMatrix(request.MatA, "MatA");
+            if (errA is not null) return errA;
+
+            if (request.MatB is null) return BadRequest(new { error = "MatB is required for addition operations." });
+            var errB = RequestValidator.ValidateMatrix(request.MatB, "MatB");
+            if (errB is not null) return errB;
+
+
+            var result = ToJagged(LinearAlgebra.AddMatrices(request.MatA!, request.MatB!).ToArray());
             return Ok(new { result });
         }
 
         // POST endpoint to transpose a matrix
         [HttpPost("transpose")]
-        public IActionResult MatrixTranspose(MatrixRequest request)
+        public IActionResult MatrixTranspose([FromBody] MatrixRequest request)
         {
-            var result = ToJagged(LinearAlgebra.TransposeMatrix(request.MatrixA).ToArray());
+            var errA = RequestValidator.ValidateMatrix(request.MatA, "MatA");
+            if (errA is not null) return errA;
+
+            var result = ToJagged(LinearAlgebra.TransposeMatrix(request.MatA!).ToArray());
             return Ok(new { result });
         }
 

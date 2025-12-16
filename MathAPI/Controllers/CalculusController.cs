@@ -1,4 +1,5 @@
-﻿using MathCore;
+﻿using MathAPI.RequestValidation;
+using MathCore;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MathAPI.Controllers
@@ -7,9 +8,6 @@ namespace MathAPI.Controllers
     [Route("calculus")]
     public class CalculusController : Controller
     {
-        // Request model for ODE solving
-        public record ODERequest(string func, double y0, double t0, double dt, int n);
-
         // Select ODE by name
         private static double F(string name, double t, double y)
         {
@@ -33,33 +31,45 @@ namespace MathAPI.Controllers
 
         // POST endpoint to solve ODE using Euler's method
         [HttpPost("Euler")]
-        public IActionResult SolveODEWithEuler(ODERequest request)
+        public IActionResult SolveODEWithEuler([FromBody] ODERequest request)
         {
-            var result = ODE.EulerMethod((t, y) => F(request.func, t, y), request.y0, request.t0, request.dt, request.n);
+            var err = RequestValidator.ValidateODERequest(request);
+            if (err is not null) return err;
+
+            var result = ODE.EulerMethod((t, y) => F(request.func!, t, y), request.y0!.Value, request.t0!.Value, request.dt!.Value, request.n!.Value);
             return Ok(new { result });
         }
 
-        // POST endpoint to solve ODE using Improved Euler method
+        // POST endpoint to solve ODE using Improved Euler method`
         [HttpPost("Heuns")]
-        public IActionResult SolveODEWithImprovedEuler(ODERequest request)
+        public IActionResult SolveODEWithImprovedEuler([FromBody] ODERequest request)
         {
-            var result = ODE.ImprovedEulerMethod((t, y) => F(request.func, t, y), request.y0, request.t0, request.dt, request.n);
+            var err = RequestValidator.ValidateODERequest(request);
+            if (err is not null) return err;
+
+            var result = ODE.ImprovedEulerMethod((t, y) => F(request.func!, t, y), request.y0!.Value, request.t0!.Value, request.dt!.Value, request.n!.Value);
             return Ok(new { result });
         }
 
         // POST endpoint to solve ODE using RK2 method
         [HttpPost("RK2")]
-        public IActionResult SolveODEWithRK2(ODERequest request)
+        public IActionResult SolveODEWithRK2([FromBody] ODERequest request)
         {
-            var result = ODE.RK2((t, y) => F(request.func, t, y), request.y0, request.t0, request.dt, request.n);
+            var err = RequestValidator.ValidateODERequest(request);
+            if (err is not null) return err;
+
+            var result = ODE.RK2((t, y) => F(request.func!, t, y), request.y0!.Value, request.t0!.Value, request.dt!.Value, request.n!.Value);
             return Ok(new { result });
         }
 
         // POST endpoint to solve ODE using RK4 method
         [HttpPost("RK4")]
-        public IActionResult SolveODEWithRK4(ODERequest request)
+        public IActionResult SolveODEWithRK4([FromBody] ODERequest request)
         {
-            var result = ODE.RK4((t, y) => F(request.func, t, y), request.y0, request.t0, request.dt, request.n);
+            var err = RequestValidator.ValidateODERequest(request);
+            if (err is not null) return err;
+
+            var result = ODE.RK4((t, y) => F(request.func!, t, y), request.y0!.Value, request.t0!.Value, request.dt!.Value, request.n!.Value);
             return Ok(new { result });
         }
     }

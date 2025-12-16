@@ -21,7 +21,7 @@ namespace MathCore
             return y;
         }
 
-        // Improved Euler (Heun's / Trapezoidal) Method for solving ODEs
+        // Runge-Kutta 2nd Order (Improved Euler / Heun's / Trapezoidal) Method for solving ODEs
         public static double ImprovedEulerMethod(Func<double, double, double> f, double y0, double t0, double dt, int n)
         {
             double t = t0;
