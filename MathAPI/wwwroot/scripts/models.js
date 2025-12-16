@@ -12,8 +12,9 @@ function showModel(name) {
     });
 
     document.querySelectorAll(".tabs span").
-        forEach(el => {el.classList.toggle("active", el.textContent.toLowerCase().includes(name));
-    });
+        forEach(el => {
+            el.classList.toggle("active", el.textContent.toLowerCase().includes(name));
+        });
 }
 
 /* OUTPUT & HISTORY HANDLING */
@@ -30,31 +31,73 @@ function appendHistory(text) {
 
 /* POST JSON FUNCTION */
 async function postJson(url, payload) {
-  const resp = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
-  });
+    const resp = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+    });
 
-  let data = null;
-  try { data = await resp.json(); } catch { /* ignore */ }
+    // Always read body first (even on 400 code)
+    const text = await resp.text();
 
-  if (!resp.ok) {
-    const msg = (data && (data.message ?? data.error)) ?? `HTTP ${resp.status}`;
-    throw new Error(msg);
-  }
-  return data;
+    // Tries JSON, fall back to raw text
+    let data = null;
+    try {
+        data = text ? JSON.parse(text) : null;
+    } catch {
+        data = null;
+    }
+
+    if (!resp.ok) {
+        // 🔑 Handle ASP.NET validation errors properly
+        if (data?.errors) {
+            const fields = Object.keys(data.errors);
+            throw new Error(`Missing or invalid input: ${fields.join(", ")}`);
+        }
+        if (data?.message) {
+            throw new Error(data.message);
+        }
+        throw new Error(`HTTP ${resp.status}`);
+    }
+
+    return data;
 }
 
 /* ALGEBRA API */
 
 async function algebra(method) {
-    const a = Number(aInput.value);
-    const b = Number(bInput.value);
+    const a = Number(document.getElementById("a").value);
+    const b = Number(document.getElementById("b").value);
 
     if (!Number.isFinite(a) || !Number.isFinite(b)) {
         const msg = "Error: a and b must be valid numbers.";
         writeOutput(msg);
+        return;
+    }
+
+    if (!a || !b) {
+        if (!a && !b) {
+            const msg = "Error: a and b are required.";
+            writeOutput(msg);
+            appendHistory(`Algebra | ${method}((N/A), (N/A)) => ${msg}`);
+            return;
+        }
+        if (!a) {
+            const msg = "Error: a is required.";
+            writeOutput(msg);
+            appendHistory(`Algebra | ${method}((N/A), ${b}) => ${msg}`);
+            return;
+        }
+        if (!b) {
+            const msg = "Error: b is required.";
+            writeOutput(msg);
+            appendHistory(`Algebra | ${method}(${a}, (N/A)) => ${msg}`);
+            return;
+        }
+
+        const msg = "Error: a and b are required.";
+        writeOutput(msg);
+        appendHistory(`Algebra | ${method}(${a}, ${b}) => ${msg}`);
         return;
     }
 
@@ -64,6 +107,7 @@ async function algebra(method) {
         appendHistory(`Algebra | ${method}(${a}, ${b}) => ${data.result}`);
     } catch (e) {
         const msg = e.message ?? "Unknown error";
+        console.error(`[ERROR] => Algebra | ${method}: ${e.message}`); // debug log
         writeOutput(`Error: ${msg}`);
         appendHistory(`Algebra | ${method}(${a}, ${b}) => Error: ${msg}`);
     }
@@ -72,11 +116,11 @@ async function algebra(method) {
 /* CALCULUS API */
 
 async function calc(method) {
-    const func = funcInput.value.trim();
-    const y0 = Number(y0Input.value);
-    const t0 = Number(t0Input.value);
-    const dt = Number(dtInput.value);
-    const n  = Number(nInput.value);
+    const func = document.getElementById("func").value.trim();
+    const y0 = Number(document.getElementById("y0").value);
+    const t0 = Number(document.getElementById("t0").value);
+    const dt = Number(document.getElementById("dt").value);
+    const n = Number(document.getElementById("n").value);
 
     if (!func || !Number.isFinite(y0) || !Number.isFinite(t0) || !Number.isFinite(dt) || !Number.isFinite(n)) {
         const msg = "Error: func, y0, t0, dt, n are required.";
@@ -97,6 +141,7 @@ async function calc(method) {
         appendHistory(`ODE | ${method.toUpperCase()}, ${func} => ${JSON.stringify(data.result)}`);
     } catch (e) {
         const msg = e.message ?? "Unknown error";
+        console.error(`[ERROR] => ODE | ${method}: ${e.message}`); // debug log
         writeOutput(`Error: ${msg}`);
         appendHistory(`ODE | ${method.toUpperCase()}, ${func} => Error: ${msg}`);
     }
@@ -105,17 +150,17 @@ async function calc(method) {
 /* VECTOR API */
 
 function parseVector(str) {
-  const s = (str ?? "").trim();
-  if (!s) return null;
+    const s = (str ?? "").trim();
+    if (!s) return null;
 
-  const arr = s.split(",").map(x => Number(x.trim()));
-  if (arr.length === 0 || arr.some(v => !Number.isFinite(v))) return null;
-  return arr;
+    const arr = s.split(",").map(x => Number(x.trim()));
+    if (arr.length === 0 || arr.some(v => !Number.isFinite(v))) return null;
+    return arr;
 }
 
 async function vector(method) {
-    const A = parseVector(vecAInput.value);
-    const B = parseVector(vecBInput.value);
+    const A = parseVector(document.getElementById("vA").value);
+    const B = parseVector(document.getElementById("vB").value);
 
     if (!A || !B) {
         const msg = "Error: invalid vector input (use comma-separated numbers).";
@@ -136,6 +181,7 @@ async function vector(method) {
         appendHistory(`Vector | ${method} => ${JSON.stringify(data.result)}`);
     } catch (e) {
         const msg = e.message ?? "Unknown error";
+        console.error(`[ERROR] => Vector | ${method}: ${e.message}`); // debug log
         writeOutput(`Error: ${msg}`);
         appendHistory(`Vector | ${method} => Error: ${msg}`);
     }
@@ -144,18 +190,18 @@ async function vector(method) {
 /* MATRIX API */
 
 function parseMatrix(str) {
-  const s = (str ?? "").trim();
-  if (!s) return null;
+    const s = (str ?? "").trim();
+    if (!s) return null;
 
-  const M = s.split(";").map(row => row.split(",").map(x => Number(x.trim())));
-  if (M.length === 0) return null;
+    const M = s.split(";").map(row => row.split(",").map(x => Number(x.trim())));
+    if (M.length === 0) return null;
 
-  const cols = M[0].length;
-  if (cols === 0) return null;
+    const cols = M[0].length;
+    if (cols === 0) return null;
 
-  if (M.some(r => r.length !== cols)) return null;                 // rectangular
-  if (M.some(r => r.some(v => !Number.isFinite(v)))) return null;  // numeric only
-  return M;
+    if (M.some(r => r.length !== cols)) return null;                 // rectangular
+    if (M.some(r => r.some(v => !Number.isFinite(v)))) return null;  // numeric only
+    return M;
 }
 
 async function matrix(method) {
@@ -165,13 +211,15 @@ async function matrix(method) {
     const matrixA = parseMatrix(rawA);
     if (!matrixA) {
         writeOutput("Error: Invalid Matrix A");
+        appendHistory(`Matrix | ${method} => Error: Invalid Matrix A`);
         return;
     }
     let payload = { matrixA };  // default payload
 
     if (method === "add") {
         if (operandType !== "matrix") {
-             writeOutput("Error: Matrix Addition requires a Matrix B");
+            writeOutput("Error: Matrix Addition requires a Matrix B");
+            appendHistory(`Matrix | ${method} => Error: Matrix Addition requires a Matrix B`);
             return;
         }
         payload.matrixB = parseMatrix(document.getElementById("mB").value);
@@ -180,7 +228,11 @@ async function matrix(method) {
     if (method === "multiply") {
         if (operandType === "matrix") {
             payload.matrixB = parseMatrix(document.getElementById("mB").value);
-            
+            if (!payload.matrixB) {
+                writeOutput("Error: Invalid Matrix B");
+                appendHistory(`Matrix | ${method} => Error: Invalid Matrix B`);
+                return;
+            }
         } else {
             payload.vector = parseVector(document.getElementById("mVec").value);
         }
@@ -195,7 +247,8 @@ async function matrix(method) {
         appendHistory(`Matrix | ${method} => ${JSON.stringify(data.result)}`);
     } catch (e) {
         const msg = e.message ?? "Unknown error";
-        writeOutput("Error: " + msg);
+        console.error(`[ERROR] => Matrix | ${method}: ${e.message}`); // debug log
+        writeOutput(`Error: ${msg}`);
         appendHistory(`Matrix | ${method} => Error: ${msg}`);
     }
 }

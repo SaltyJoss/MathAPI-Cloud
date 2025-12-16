@@ -31,17 +31,17 @@ namespace MathAPI.RequestValidation
         // Validates that a matrix is non-null, non-empty, and rectangular.
         public static IActionResult? ValidateMatrix(double[][]? M, string paramName = "matrix")
         {
-            if (M is null) return new BadRequestObjectResult($"{paramName} is required.");
+            if (M is null) return new BadRequestObjectResult($"{paramName} is required");
             if (M.Length == 0)
-                return new BadRequestObjectResult($"{paramName} must have at least 1 row.");
+                return new BadRequestObjectResult($"{paramName} must have at least 1 row");
 
             int cols = M[0]?.Length ?? 0;
             if (cols == 0)
-                return new BadRequestObjectResult($"{paramName} must have at least 1 column.");
+                return new BadRequestObjectResult($"{paramName} must have at least 1 column");
 
             for (int i = 1; i < M.Length; i++)
             {
-                if (M[i] is null) return new BadRequestObjectResult($"{paramName}[{i}] is null.");
+                if (M[i] is null) return new BadRequestObjectResult($"{paramName}[{i}] is null");
                 if (M[i].Length != cols)
                     return new BadRequestObjectResult($"{paramName} must be rectangular (row {i} length differs).");
             }
@@ -55,32 +55,32 @@ namespace MathAPI.RequestValidation
             var err = ValidateMatrix(M, paramName);
             if (err is not null) return err;
             if (M!.Length != M[0].Length)
-                return new BadRequestObjectResult($"{paramName} must be square.");
+                return new BadRequestObjectResult($"{paramName} must be square");
             return null;
         }
 
         // Validates that a vector is non-null and has at least one element.
         public static IActionResult? ValidateVector(double[]? v, string paramName = "vector")
         {
-            if (v is null) return new BadRequestObjectResult($"{paramName} is required.");
+            if (v is null) return new BadRequestObjectResult($"{paramName} is required");
             if (v.Length == 0)
-                return new BadRequestObjectResult($"{paramName} must have at least 1 element.");
+                return new BadRequestObjectResult($"{paramName} must have at least 1 element");
             return null;
         }
 
         // Validates that two vectors are non-null, non-empty, and of the same length.
         public static IActionResult? ValidateSameLength(double[]? a, double[]? b, string nameA = "vectorA", string nameB = "vectorB")
         {
-            if (a is null) return new BadRequestObjectResult($"{nameA} is required.");
-            if (b is null) return new BadRequestObjectResult($"{nameB} is required.");
-            if (a.Length == 0 || b.Length == 0) return new BadRequestObjectResult("Vectors must be non-empty.");
-            if (a.Length != b.Length) return new BadRequestObjectResult("Vectors must be the same length.");
+            if (a is null) return new BadRequestObjectResult($"{nameA} is required");
+            if (b is null) return new BadRequestObjectResult($"{nameB} is required");
+            if (a.Length == 0 || b.Length == 0) return new BadRequestObjectResult("Vectors must be of 2 or 3 Dimensions");
+            if (a.Length != b.Length) return new BadRequestObjectResult("Vectors must be the same length");
             return null;
         }
 
         public static IActionResult? ValidateScalar(double? value, string paramName = "scalar")
         {
-            if (value is null) return new BadRequestObjectResult($"{paramName} is required.");
+            if (value is null) return new BadRequestObjectResult($"{paramName} is required");
             return null;
         }
     }
