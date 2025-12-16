@@ -34,9 +34,11 @@ app.UseExceptionHandler(errorApp =>
     });
 });
 
-app.UseAuthorization();
+app.UseDefaultFiles();
 
 app.UseStaticFiles();
+
+app.UseAuthorization();
 
 app.MapControllers();
 
