@@ -8,12 +8,14 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+
 var rewrite = new RewriteOptions()
+    .AddRedirect("^models\\.html$", "/models", statusCode: 301)
+    .AddRedirect("^index\\.html$", "/", statusCode: 301)
     .AddRewrite("^models/?$", "models.html", true)
     .AddRewrite("^home/?$", "index.html", true);
 
-//app.UseHttpsRedirection();
+// Configure the HTTP request pipeline.
 app.UseExceptionHandler(errorApp =>
 {
     errorApp.Run(async context =>
@@ -29,13 +31,10 @@ app.UseExceptionHandler(errorApp =>
     });
 });
 
-app.UseDefaultFiles();      // Serve default files (index.html)
-
 app.UseRewriter(rewrite);   // Add URL rewrite rules
 
+app.UseDefaultFiles();      // Serve default files (index.html)
 app.UseStaticFiles();       // Serve static files
-
-app.UseAuthorization();     // Authorization middleware
 
 app.MapControllers();       // Map controller routes
 
