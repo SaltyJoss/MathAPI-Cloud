@@ -43,19 +43,9 @@ namespace MathAPI.RequestValidation
             {
                 if (M[i] is null) return new BadRequestObjectResult($"{paramName}[{i}] is null");
                 if (M[i].Length != cols)
-                    return new BadRequestObjectResult($"{paramName} must be rectangular (row {i} length differs).");
+                    return new BadRequestObjectResult($"{paramName} must be sqaure(row {i} length differs).");
             }
 
-            return null;
-        }
-
-        // Validates that a matrix is square.
-        public static IActionResult? ValidateSquare(double[][]? M, string paramName = "Matrix")
-        {
-            var err = ValidateMatrix(M, paramName);
-            if (err is not null) return err;
-            if (M!.Length != M[0].Length)
-                return new BadRequestObjectResult($"{paramName} must be square");
             return null;
         }
 
