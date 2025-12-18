@@ -286,4 +286,9 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
         console.warn("[WARN] Matrix operand DOM elements NOT FOUND."); // more debugging 
     }
+
+    // CLEAR HISTORY BUTTON
+    document.getElementById("clearHistoryBtn").addEventListener("click", () => {
+        document.getElementById("history").value = "";
+    });
 });
