@@ -37,29 +37,15 @@ async function postJson(url, payload) {
         body: JSON.stringify(payload)
     });
 
-    // Always read body first (even on 400 code)
     const text = await resp.text();
-
-    // Tries JSON, fall back to raw text
     let data = null;
-    try {
-        data = text ? JSON.parse(text) : null;
-    } catch {
-        data = null;
-    }
+    try { data = text ? JSON.parse(text) : null; } catch {}
 
     if (!resp.ok) {
-        // Handle ASP.NET validation errors properly
-        if (data?.errors) {
-            const fields = Object.keys(data.errors);
-            throw new Error(`Missing or invalid input => ${fields.join(", ")}`);
-        }
-        if (data?.message) {
-            throw new Error(data.message);
-        }
+        if (data?.errors) { throw new Error(`Missing or invalid input => ${fields.join(", ")}`); }
+        if (data?.error) { throw new Error(data.error); }
         throw new Error(`HTTP ${resp.status}`);
     }
-
     return data;
 }
 
