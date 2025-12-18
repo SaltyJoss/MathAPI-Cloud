@@ -42,7 +42,7 @@ async function postJson(url, payload) {
     try { data = text ? JSON.parse(text) : null; } catch {}
 
     if (!resp.ok) {
-        if (data?.errors) { throw new Error(`Missing or invalid input => ${fields.join(", ")}`); }
+        if (data?.errors) { throw new Error(`Missing or invalid input => ${Object.keys(data.errors).join(", ")}`); }
         if (data?.error) { throw new Error(data.error); }
         throw new Error(`HTTP ${resp.status}`);
     }
