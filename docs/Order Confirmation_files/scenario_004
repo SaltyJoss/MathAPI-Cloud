@@ -1,0 +1,88 @@
+window.DigitalFeedback['https://digitalfeedback.euro.confirmit.com/api/digitalfeedback/loader/prod/scenario?programKey=bIBWJz&scenarioId=13578&programVersion=99'] = function (api) {
+(function(){
+    var ctx = api();
+    function getVal(x) { if (x instanceof Function) { return x(); } return x; }
+ 
+    function userfunc5188(ctx, MySurveyID, MyContainerInline, target, cookieExpiration, showConsoleLog) {
+var showLog = showConsoleLog == 1 ? true : false; 					// show console log
+var DFProgramID  = "2303/5188";										// source data information
+var DFProgramVersion = "v2.05";										// script information
+var logString = "Discoverypages : " + DFProgramVersion + " "; 		// prefix console log entries
+var cookieName = MySurveyID + "_Discoverypages"; 	
+
+ConfirmitHelper.ConfirmitLog(showLog,logString + "SCRIPT:Loading");
+
+// Domain Check
+if (document.location.host === 'fr.rs-online.com' || document.location.host === 'st1-f1.rs-online.com' ||  document.location.host === 'demo.forsta.com'){
+  	ConfirmitHelper.ConfirmitLog(showLog,logString + "Correct domain, continuing");
+ 	if(document.location.host === 'demo.forsta.com'){target = "#quick-nav"}
+}else{
+	ConfirmitHelper.ConfirmitLog(showLog,logString + "Incorrect domain, exiting");
+  	return;
+}
+
+// // Check for Cookie Drop
+// if(ConfirmitHelper.getCookie(cookieName)){
+// 	ConfirmitHelper.ConfirmitLog(showLog,logString + MySurveyID + " survey cookie present, exiting as within cookie expiration");
+// 	return;
+// }
+
+// Is the target on the page
+if (document.querySelector(target)) {
+ 	// does exist
+	ConfirmitHelper.ConfirmitLog(showLog,logString + "Target exists continuing");
+}else{
+  	// does NOT exist
+	ConfirmitHelper.ConfirmitLog(showLog,logString + "Target NOT on page exiting");
+	return;
+}
+
+/* START OF MAIN SCRIPT */
+
+// Calculate the language for the survey
+var documentHREF = document.location.href;
+var documentHOST = document.location.host;
+
+var dObj = {};
+
+dObj.l = ConfirmitHelper.GetSiteLang()// confLang;
+dObj.DFSource = "Web_Discovery_Blog_YesNo";
+dObj.DFID = DFProgramID;
+dObj.DFVersion = DFProgramVersion;
+dObj.DFPageRef = document.referrer;
+dObj.DFPageURL = document.location.href.toLowerCase();
+dObj.DFHost = document.location.host;
+dObj.pageURL = documentHREF;
+dObj.hostName = documentHOST;
+dObj.DFSiteLanguage = window.navigator.language;		// There is no language variable on the site so pipe in the browser lang
+dObj.DFSiteUserLanguages = window.navigator.languages;	// Available user languages in browser
+dObj.DFSiteUserLanguage  = window.navigator.language;	// Active user language
+
+dObj.DFScreenWidth = window.screen.width;
+dObj.DFScreenHeight = window.screen.height;
+dObj.DFScreenisExtended = window.screen.isExtended
+dObj.DFScreenOrientation = window.screen.orientation.type        
+dObj.DFScreenViewportWidth = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)             		
+dObj.DFScreenViewportHeight = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0)             		     
+dObj.DFdpr = window.devicePixelRatio
+
+ConfirmitHelper.ConfirmitLog(showLog, logString + JSON.stringify(dObj));
+
+var dfInst = api();
+dfInst.container(MyContainerInline, { target, nofocus: true });
+dfInst.survey(MySurveyID)
+dfInst.data(dObj)
+dfInst.show();	
+
+// Drop display Cookie
+ConfirmitHelper.setCookie(cookieName, "1", {path : '/', expiry : parseInt(cookieExpiration) * 60, secure:true, samesite: 'None'});
+ConfirmitHelper.ConfirmitLog(showLog,logString + ": Cookie Dropped - " + cookieName + " Time Delay (minutes): " + cookieExpiration);
+
+ConfirmitHelper.ConfirmitLog(showLog, logString + "End of Script");
+}
+
+
+
+    userfunc5188(ctx, "p417123742403", "DiscoveryBlog - Container", "#Discovery_embedded_survey", -1, true)
+})();
+};

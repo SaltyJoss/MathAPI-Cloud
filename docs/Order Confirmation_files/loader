@@ -1,0 +1,81 @@
+(function (cfg) {
+    function isIe() {
+        return /MSIE|Trident/.test(window.navigator.userAgent);
+    }
+
+    function ieVersion() {
+        var ua = navigator.userAgent;
+        var match = /\b(MSIE |Trident.*?rv:|Edge\/)(\d+)/.exec(ua);
+        if (match) return parseInt(match[2]);
+    }
+
+    function isSupportedBrowser() {
+        var isModern = window.Promise
+            && (window.Object && 'entries' in Object)
+            && (window.NodeList && NodeList.prototype && 'forEach' in NodeList.prototype);
+
+        return isModern || (isIe() && ieVersion() > 10);
+    }
+
+    function Loader(cfg) {
+        this._interceptLink = isIe() ? cfg.interceptIeLink : cfg.interceptLink;
+
+        this._loading = false;
+        this._ready = false;
+        this._handlers = [];
+    }
+
+    Loader.prototype = {
+        load: function (handler) {
+            try {
+                if (this._ready) {
+                    handler();
+                    return;
+                }
+
+                this._handlers.push(handler);
+                this._load();
+            }
+            catch (e) {
+                console.warn('Unable to load Confirmit Intercept Survey', e);
+            }
+        },
+
+        _load: function () {
+            if (this._loading)
+                return;
+
+            this._loading = true;
+
+            var script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.src = this._interceptLink.url;
+            if (this._interceptLink.integrity) {
+                script.integrity = this._interceptLink.integrity;
+                script.crossOrigin = 'anonymous';
+            }
+            script.async = true;
+            script.addEventListener('load', this._onLoadComplete.bind(this), false);
+
+            var firstScriptOnPage = document.getElementsByTagName('script')[0];
+            firstScriptOnPage.parentNode.insertBefore(script, firstScriptOnPage);
+        },
+
+        _onLoadComplete: function () {
+            this._loading = false;
+            this._ready = true;
+
+            this._handlers.forEach(function (handler) {
+                handler();
+            });
+        }
+    };
+
+    if (!isSupportedBrowser())
+        return;
+
+    var loader = new Loader(cfg);
+    loader.load(function () {
+        window.DigitalFeedback[cfg.scriptVersion].run(cfg);
+    });
+})({"scriptVersion":"v34","interceptLink":{"url":"https://digitalfeedback.euro.confirmit.com/api/digitalfeedback/static/v34/intercept-survey.js"},"programUrl":"https://digitalfeedback.euro.confirmit.com/api/digitalfeedback/loader/prod/program?programKey=bIBWJz&programVersion=99","programVersion":99,"plugins":[{"name":"event-logger","version":"v1","link":{"url":"https://digitalfeedback.euro.confirmit.com/api/digitalfeedback/static/plugins/event-logger/v1/index.js"}},{"name":"screenshot-capture","version":"1.0.4","link":{"url":"https://digitalfeedback.euro.confirmit.com/api/digitalfeedback/static/plugins/screenshot-capture/1.0.4/index.js"}}]});

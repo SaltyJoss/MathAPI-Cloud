@@ -1,0 +1,206 @@
+window.DigitalFeedback['https://digitalfeedback.euro.confirmit.com/api/digitalfeedback/loader/prod/scenario?programKey=bIBWJz&scenarioId=13583&programVersion=99'] = function (api) {
+(function(){
+    var ctx = api();
+    function getVal(x) { if (x instanceof Function) { return x(); } return x; }
+ 
+    function userfunc5193(ctx, MySurvey, MyContainer, MyInvite, cookieExpiration, cookieExpiration_closeclick, SlideOut, showConsoleLog) {
+var showLog = showConsoleLog == 1 ? true : false; 					// show console log
+var DFProgramID  = "2303/5193";										// source data information
+var DFProgramVersion = "v1.0";										// script information
+var logString = "Product categories: " + DFProgramVersion + " "; 	// prefix console log entries
+var cookieName = MySurvey + "_categories_shown"; 						// cookie name to track when to show the invite next time
+
+// Global data object for user data storage
+var dObj = {};
+
+// Check for Cookie Drop
+if(ConfirmitHelper.getCookie(cookieName)){
+	ConfirmitHelper.ConfirmitLog(showLog,logString + MySurvey + " survey cookie present, exiting as within cookie expiration");
+	return;
+}
+
+// Only run on the following domains
+if (document.location.host === 'uk.rs-online.com' || document.location.host === 'st1-ie.rs-online.com' || document.location.host === 'ie.rs-online.com' || document.location.host === 'st1-za.rs-online.com' || document.location.host === 'za.rs-online.com' || document.location.host === 'st1-no.rs-online.com' || document.location.host === 'no.rs-online.com' || document.location.host === 'sg.rs-online.com' || document.location.host === 'st1-sg.rs-online.com' || document.location.host === 'st1-ph.rs-online.com' || document.location.host === 'ph.rs-online.com' || document.location.host === 'my.rs-online.com' || document.location.host === 'st1-my.rs-online.com' || document.location.host === 'st1-au.rs-online.com' || document.location.host === 'au.rs-online.com' || document.location.host === 'st1-nz.rs-online.com' || document.location.host === 'snz.rs-online.com' || document.location.host === 'es.rs-online.com' || document.location.host === 'st1-es.rs-online.com' || document.location.host === 'st1-uk.rs-online.com' || document.location.host === 'st1-de.rs-online.com' || document.location.host === 'de.rs-online.com' || document.location.host === 'st1-at.rs-online.com' || document.location.host === 'at.rs-online.com' || document.location.host === 'st1-f1.rs-online.com' || document.location.host === 'fr.rs-online.com' ||document.location.host === 'demo.forsta.com'){
+  	ConfirmitHelper.ConfirmitLog(showLog,logString + "Correct domain, continuing");
+	ConfirmitHelper.ConfirmitLog(showLog,logString + "Showing Invite in: " + SlideOut + " seconds");
+}else{
+	ConfirmitHelper.ConfirmitLog(showLog,logString + "Incorrect domain, exiting");
+  	return;
+}
+
+var pageIncluded = false;
+
+// Only run on the following pages
+// var pageCodes = Object.getOwnPropertyNames(includePages);
+// for (var i = 0; i < pageCodes.length; i++){
+  
+// var pageURL = includePages[pageCodes[i]];
+// var pattern = new RegExp (pageURL);
+// var isPage = pattern.test(document.location.href);
+	
+// ConfirmitHelper.ConfirmitLog(showLog,logString + "Checking: "  + pageURL +  " vs " + document.location.href);
+	
+// if (isPage){
+// pageIncluded = true;
+// i=pageCodes.length; // break the loop
+// }
+// }
+
+// New check here for data
+var page_type = rs.web.digitalData.page_type;
+
+if(page_type == 'new l1' || page_type == 'new l2' || page_type == 'new tn'){
+	ConfirmitHelper.ConfirmitLog(showLog,logString + "On correct page");
+	pageIncluded = true;
+}else{
+	ConfirmitHelper.ConfirmitLog(showLog,logString + "NOT On correct page");
+	pageIncluded = false;
+}
+
+
+if(pageIncluded == false){
+	ConfirmitHelper.ConfirmitLog(showLog,logString + "Not on includePages list, exiting");
+	return
+}else{
+    ConfirmitHelper.ConfirmitLog(showLog,"**********************************");
+    ConfirmitHelper.ConfirmitLog(showLog,logString + "page_type: " + page_type);
+	ConfirmitHelper.ConfirmitLog(showLog,logString + "Page match, continuing");
+  	ConfirmitHelper.ConfirmitLog(showLog,"**********************************");
+}
+
+    // Load invite off the side of the page
+	var ctx = api();
+	ctx.invite(MyInvite);
+	ctx.show();
+
+	ConfirmitHelperX = {
+	
+      'toggle' : function() {
+        var element1 = document.getElementById("slideout");
+        var element2 = document.getElementById("slideout_inner");
+        if (element1.className === "slideouttog1") {
+          element1.className = "slideouttog2";
+          element2.className = "slideout_innertog2";
+        } else {
+          element1.className = "slideouttog1";
+          element2.className = "slideout_innertog1";
+        }
+      }
+    }
+
+	var cffbttriggered = false;
+
+	ConfirmitHelperX.openPop = function(dObj){
+		if( !cffbttriggered ){
+
+			const target = '.myinlinecontainer';
+
+			var ctx = api()
+                ctx.container(MyContainer,{target})
+				ctx.survey(MySurvey)
+				ctx.data(dObj)
+          		ctx.show();
+  
+          cffbttriggered = true;
+
+          	// Event for when the invite is shown on screen
+	    	ConfirmitHelper.ConfirmitLog(showLog,logString + ": Triggering Invite (On timer)");
+			ConfirmitHelper.setCookie(cookieName, "1", {path : '/', expiry : parseInt(cookieExpiration) * 86400, secure:true, samesite: 'None'});
+			ConfirmitHelper.ConfirmitLog(showLog,logString + ": Cookie Dropped - " + cookieName + " Time Delay (Days): " + cookieExpiration);
+
+          ctx.events.completeSurvey.on(function() { 
+				document.getElementById('slideout').style.display = "none";
+				ConfirmitHelper.ConfirmitLog(showLog,logString + "Survey Completed: closing invite");
+			});
+		}
+    // Toggle the invite to show
+	ConfirmitHelperX.toggle();
+    }
+	
+	// Event when the "close" button is clicked on the invite
+    ctx.events.closeInvite.on(function() { 
+		ConfirmitHelper.ConfirmitLog(showLog,logString + "Invite Closed (X button clicked)");
+		ConfirmitHelper.setCookie(cookieName, "1", {path : '/', expiry : parseInt(cookieExpiration_closeclick) * 86400, secure:true, samesite: 'None'});
+		ConfirmitHelper.ConfirmitLog(showLog,logString + ": Cookie Dropped - " + cookieName + " Time Delay (Days): " + cookieExpiration_closeclick);
+    });
+
+
+	// Initial Page loading event
+    setTimeout(function(){
+		var element1 = document.getElementById("slideout");
+		// If not slide out already
+        if (element1.className === "slideouttog1") {
+          ConfirmitHelper.ConfirmitLog(showLog,logString + ": Invite Shown");
+          setData(dObj);
+		  ConfirmitHelperX.openPop(dObj);
+        }else{
+			ConfirmitHelper.ConfirmitLog(showLog,logString + ": Invite already open, skipping");
+		}
+     }, SlideOut * 1000);// Slide the invite automatically after x seconds
+  
+	// Keep track of page counts in the session
+  	var pageCount = +sessionStorage.getItem('visited_page_count');
+	sessionStorage.setItem('visited_page_count', ++pageCount);
+
+	// Function to populate the data package
+	function setData(){
+			//Get language from website
+          	var FLang = getLang();
+
+			dObj.DFSiteLanguage = FLang[0];
+			dObj.l = FLang[1];
+          	dObj.DFID = DFProgramID;
+  			dObj.DFVersion = DFProgramVersion;
+           	dObj.DFSource = "Web_Search";
+
+			dObj.DFPageRef = document.referrer;
+       		dObj.DFPageURL = document.location.href.toLowerCase();
+			dObj.DFHost = document.location.host;
+
+       		dObj.DFuws_visitor_id = sessionStorage.getItem("uws_visitor_id");
+       		dObj.DFpathname = location.pathname;
+       		dObj.DFpageCount = pageCount;
+          
+       		dObj.DFScreenWidth = window.screen.width;
+       		dObj.DFScreenHeight = window.screen.height;
+       		dObj.DFScreenisExtended = window.screen.isExtended
+       		dObj.DFScreenOrientation = window.screen.orientation.type        
+       		dObj.DFScreenViewportWidth = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)             		
+       		dObj.DFScreenViewportHeight = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0)             		     
+			dObj.DFdpr = window.devicePixelRatio
+			dObj.DFuws_prop_Entry_Page = ConfirmitHelper.getCookie("uws_prop_Entry_Page")          
+			dObj.DFuws_visited_pages = sessionStorage.getItem("uws_visited_pages");       
+
+			//Capture more page data
+			  if (document.location.host !== 'demo.forsta.com') {
+				dObj.DFCategoryName = window.rs.web.digitalData.categoryName;
+				dObj.DFContactID = window.rs.web.digitalData.customer_contact_id;
+				dObj.DFSoldToID = window.rs.web.digitalData.customer_sold_to;
+				dObj.DFSystemID = window.rs.web.digitalData.ecSystemId;
+				dObj.DFPageName = window.rs.web.digitalData.page_name;
+				dObj.DFPageType = window.rs.web.digitalData.page_type;
+				dObj.DFProductCount = window.rs.web.digitalData.productCount;
+				dObj.DFBrowse = window.rs.web.digitalData.search_browse;
+				dObj.DFSiteCategory = window.rs.web.digitalData.site_category;
+				dObj.DFSiteSection = window.rs.web.digitalData.site_section;
+				dObj.DFSiteSection2 = window.rs.web.digitalData.site_section2;
+				dObj.DFSiteSection3 = window.rs.web.digitalData.csite_section3;
+				dObj.DFurlSearch = document.location.search; //window.rs.web.digitalData.url.search;
+			  }
+			  // end of additional data capture
+
+
+
+
+
+      			
+			// Log out the data package for debug
+  			ConfirmitHelper.ConfirmitLog(showLog,logString + "Data: " + JSON.stringify(dObj));
+      }
+}
+
+
+
+    userfunc5193(ctx, "p489124939750", "Product categories: container", "Product categories (Right)", 30, 30, 40, 1)
+})();
+};

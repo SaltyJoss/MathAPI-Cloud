@@ -1,0 +1,61 @@
+window.DigitalFeedback['https://digitalfeedback.euro.confirmit.com/api/digitalfeedback/loader/prod/scenario?programKey=bIBWJz&scenarioId=12408&programVersion=99'] = function (api) {
+ConfirmitHelper = {
+  
+	ConfirmitLog : function(show,string){if(show){console.log("CONF: "+string)}},
+	
+	setCookie:function(b,c,a){b=[encodeURIComponent(b)+"="+encodeURIComponent(c)];a&&("expiry"in a&&("number"==typeof a.expiry&&(a.expiry=new Date(1E3*a.expiry+ +new Date)),b.push("expires="+a.expiry.toGMTString())),"domain"in a&&b.push("domain="+a.domain),"path"in a&&b.push("path="+a.path),"secure"in a&&a.secure&&b.push("secure"),"samesite"in a&&b.push("SameSite="+a.samesite));document.cookie=b.join("; ")},
+	
+	getCookie:function(b,c){for(var a=[],e=document.cookie.split(/; */),d=0;d<e.length;d++){var f=e[d].split("=");f[0]==encodeURIComponent(b)&&a.push(decodeURIComponent(f[1].replace(/\+/g,"%20")))}return c?a:a[0]},
+	
+    //getBasketCookie:function(b,c){for(var a=[],e=document.cookie.split(/; */),d=0;d<e.length;d++){var f=e[d].split("=");f[0]==encodeURIComponent(b) && a.push(decodeURIComponent(f[0].replace(/\+/g,"%20")))}return c?a:a[0]},
+
+    clearCookie:function(b){ConfirmitHelper.setCookie(b,'', {path : '/', expiry : -86400, secure:true, samesite: 'None'});},
+
+    getMeta:function(metaName){const metas = document.getElementsByTagName('meta'); for(let i = 0; i < metas.length; i++) { if (metas[i].getAttribute('name') === metaName) { return metas[i].getAttribute('content'); } } return ''; },
+
+	getLocation : function(){ var dlh = ""+document.location.href; return dlh.toLowerCase(); },
+
+  	getUrlParameter : function(name){name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]'); var regex = new RegExp('[\\?&]' + name + '=([^&#]*)'); var results = regex.exec(location.search); return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));},
+  
+	GetSiteLang : function() {
+        //Below is used for multilingual surveys - converting the website lang code to the 
+        LangIDs = { 'en_hk': 9, 'en_my': 9, 'en_no': 9, 'en_tw': 9, 'en_us': 9, 'en_sg': 9, 'en_my': 9, 'en_p': 9, 'ja_jp': 17, 'ar': 1, 'ar_sa': 1025, 'ar_iq': 2049, 'ar_eg': 3073, 'ar_li': 4097, 'ar_al': 5121, 'ar_mo': 6145, 'ar_tu': 7169, 'ar_om': 8193, 'ar_ye': 9217, 'ar_sy': 10241, 'ar_jo': 11265, 'ar_le': 12289, 'ar_ku': 13313, 'ar_ua': 14337, 'ar_ba': 15361, 'ar_qa': 16385, 'bg': 2, 'ca': 3, 'zh': 4, 'zh_ta': 1028, 'zh_pr': 2052, 'zh_hk': 3076, 'zh_si': 4100, 'zh_ma': 5124, 'zh_cht': 31748, 'zh_sm': 32772, 'cs': 5, 'da': 6, 'de': 7, 'de_de': 7, 'de_ch': 2055, 'de_sw': 2055, 'de_au': 3079, 'de_lu': 4103, 'de_li': 5127, 'el': 8, 'en': 9, 'en_us': 9, 'en_gb': 9, 'en_au': 9, 'en_ca': 9, 'en_nz': 9, 'en_ir': 9, 'en_sa': 9, 'en_ja': 9, 'en_cb': 9, 'en_be': 9, 'en_tr': 9, 'en_zi': 9, 'en_ph': 9, 'es': 10, 'es_es': 1034, 'es_me': 2058, 'es_ms': 3082, 'es_gu': 4106, 'es_cr': 5130, 'es_pa': 6154, 'es_dr': 7178, 'es_ve': 8202, 'es_co': 9226, 'es_pe': 10250, 'es_ar': 11274, 'es_eq': 12298, 'es_ch': 13322, 'es_ur': 14346, 'es_bo': 16394, 'es_el': 17418, 'es_ho': 18442, 'es_ni': 19466, 'es_pr': 20490, 'fi': 11, 'fr': 12, 'fr_fr': 12, 'fr_be': 2060, 'fr_ca': 3084, 'fr_sw': 4108, 'fr_lu': 5132, 'fr_mo': 6156, 'he': 13, 'hu': 14, 'is': 15, 'it': 16, 'it_it': 16,'pl_pl': 21,'hu_hu': 14,'cs_cz': 5, 'it_sw': 2064, 'ja': 17, 'ko': 18, 'ko_ko': 1042, 'ko_jo': 2066, 'nl': 19, 'nl_nl': 1043, 'nl_be': 2067, 'no': 20, 'no_bo': 1044, 'no_ny': 2068, 'pl': 21, 'pt': 22, 'pt_br': 1046, 'pt_st': 2070, 'ro': 24, 'ru': 25, 'sr': 26, 'sr_yu': 1050, 'sr_la': 2074, 'sr_cy': 3098, 'sk': 27, 'sq': 28, 'sv': 29, 'sv_sv': 1053, 'sv_fi': 2077, 'th': 30, 'tr': 31, 'ur': 32, 'ur_pa': 1056, 'ur_in': 2080, 'id': 33, 'uk': 34, 'be': 35, 'sl': 36, 'et': 37, 'lv': 38, 'lt': 39, 'lt_lt': 1063, 'lt_cl': 2087, 'fa': 41, 'vi': 42, 'hy': 43, 'az': 44, 'az_la': 1068, 'az_cy': 2092, 'eu': 45, 'mk': 47, 'af': 54, 'ka': 55, 'fo': 56, 'hi': 57, 'ms': 62, 'ms_ms': 1086, 'ms_br': 2110, 'kk': 63, 'sw': 65, 'uz': 67, 'uz_la': 1091, 'uz_cy': 2115, 'tt': 68, 'bn': 69, 'pa': 70, 'gu': 71, 'or': 72, 'ta': 73, 'te': 74, 'kn': 75, 'ml': 76, 'as': 77, 'mr': 78, 'sa': 79, 'ki': 87, 'ma': 88, 'sd': 89, 'ks': 96, 'ks_in': 2144, 'ne': 97, 'ne_in': 2145, 'en_uk': 9, 'en_no': 9, 'nb-NO':20, 'nn-NO':20, 'no':20, 'no-no':20};
+
+        //Get language from website
+        siteLanguage = document.documentElement.lang;
+        var res = siteLanguage.replace("-", "_");
+        var FLang = LangIDs[res.toLowerCase()];
+
+        return FLang;
+  	}
+    
+}
+
+window.getDeviceType = function() {
+    if(navigator.userAgent.match(/mobile/i)) {
+        return 'Mobile';
+    }  else {
+        return 'Desktop';
+    }
+}
+
+ConfirmitHelper.getDeviceType = function() {
+    if(navigator.userAgent.match(/mobile/i)) {
+        return 'Mobile';
+    }  else {
+        return 'Desktop';
+    }
+}
+
+window.getLang = function() {
+    // Below is used for multilingual surveys - converting the website lang code to the 
+   // LangIDs = { 'es_es': 10, 'en_us': 9, 'en_gb': 9, 'en': 9, 'en_sg': 9, 'en_my': 9, 'en_ph': 9,'en_au': 9,'en_nz': 9, 'th_th': 30, 'ja_jp': 17, 'fr_fr': 12, 'it_it': 16, 'de_de': 7, 'de_at': 7,'en_ie': 9,'en_hk': 9,'zh_hk': 31748,'en_tw': 9,'zh_tw': 31748,'en_no': 9,'sv_se': 29, 'da_dk': 6, 'pt_pt': 22, 'fr_be': 12, 'nl_nl': 19, 'nl_be': 19, 'hu_hu': 14, 'cz_cz': 5, 'pl_pl': 21, 'en_za': 9,};
+    LangIDs = { 'en_my': 9, 'es_es': 10, 'en_us': 9, 'en_gb': 9, 'en': 9, 'en_sg': 9, 'en_my': 9, 'en_ph': 9,'en_au': 9,'en_nz': 9, 'th_th': 30, 'ja_jp': 17, 'fr_fr': 12, 'it_it': 16, 'de_de': 7, 'de_at': 7,'en_ie': 9,'en_hk': 9,'zh_hk': 31748,'en_tw': 9,'zh_tw': 31748,'en_no': 9,'sv_se': 29, 'da_dk': 6, 'pt_pt': 22, 'fr_be': 12, 'nl_nl': 19, 'nl_be': 19, 'hu_hu': 14, 'cz_cz': 5, 'pl_pl': 21, 'en_za': 9,'en_gb':9,'fr_fr':12,'it_it':16,'de_de':7,'zh_hk':32772,'en_tw':9,'zh_tw':31748,'ja_jp':17,'en_au':9,'en_ph':9,'en_sg':9,'en_nz':9,'th_th':30,'en_my':9,'en_no':9,'sv_se':29,'da_dk':6,'pt_pt':22,'es_es':10,'fr_be':12,'nl_be':19,'nl_nl':19,'hu_hu':14,'cs_cz':5,'pl_pl':21,'en_za':9,'de_at':7,'de_ch':7,'ko_kr':18,'cs_cz':5,'en':9,'fr':12,'it':16,'de':7,'zh':31748,'ja':17,'th':30,'sv':29,'da':6,'pt':22,'es':10,'nl':19,'hu':14,'cs':5,'pl':21,'ko':18,'en_no': 9,'nb_no':20, 'nn_no':20, 'no':20, 'no_no':20};
+
+    // Get language from website
+  	siteLanguage = document.querySelector("html").lang.trim();
+    var res = siteLanguage.replace("-", "_");
+  	var conf_lng = LangIDs[res.toLowerCase()];
+	return [siteLanguage,conf_lng]
+}
+};

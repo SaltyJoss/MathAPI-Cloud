@@ -1,12 +1,4 @@
-using MathCore;
-using MathNet.Numerics;
-using System;
-using System.Reflection.Emit;
-using System.Reflection.Metadata;
-using System.Xml.Linq;
-using static System.Collections.Specialized.BitVector32;
-using static System.Net.Mime.MediaTypeNames;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using Microsoft.AspNetCore.Rewrite;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +9,9 @@ builder.Services.AddControllers();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+var rewrite = new RewriteOptions()
+    .AddRewrite("^models/?$", "models.html", true)
+    .AddRewrite("^home/?$", "index.html", true);
 
 //app.UseHttpsRedirection();
 app.UseExceptionHandler(errorApp =>
@@ -34,12 +29,14 @@ app.UseExceptionHandler(errorApp =>
     });
 });
 
-app.UseDefaultFiles();
+app.UseDefaultFiles();      // Serve default files (index.html)
 
-app.UseStaticFiles();
+app.UseRewriter(rewrite);   // Add URL rewrite rules
 
-app.UseAuthorization();
+app.UseStaticFiles();       // Serve static files
 
-app.MapControllers();
+app.UseAuthorization();     // Authorization middleware
 
-app.Run();
+app.MapControllers();       // Map controller routes
+
+app.Run();                  // Run the application

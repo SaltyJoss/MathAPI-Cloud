@@ -29,7 +29,7 @@ namespace MathAPI.RequestValidation
         }
 
         // Validates that a matrix is non-null, non-empty, and rectangular.
-        public static IActionResult? ValidateMatrix(double[][]? M, string paramName = "matrix")
+        public static IActionResult? ValidateMatrix(double[][]? M, string paramName = "Matrix")
         {
             if (M is null) return new BadRequestObjectResult($"{paramName} is required");
             if (M.Length == 0)
@@ -50,7 +50,7 @@ namespace MathAPI.RequestValidation
         }
 
         // Validates that a matrix is square.
-        public static IActionResult? ValidateSquare(double[][]? M, string paramName = "matrix")
+        public static IActionResult? ValidateSquare(double[][]? M, string paramName = "Matrix")
         {
             var err = ValidateMatrix(M, paramName);
             if (err is not null) return err;
@@ -60,7 +60,7 @@ namespace MathAPI.RequestValidation
         }
 
         // Validates that a vector is non-null and has at least one element.
-        public static IActionResult? ValidateVector(double[]? v, string paramName = "vector")
+        public static IActionResult? ValidateVector(double[]? v, string paramName = "Vector")
         {
             if (v is null) return new BadRequestObjectResult($"{paramName} is required");
             if (v.Length == 0)
@@ -69,7 +69,7 @@ namespace MathAPI.RequestValidation
         }
 
         // Validates that two vectors are non-null, non-empty, and of the same length.
-        public static IActionResult? ValidateSameLength(double[]? a, double[]? b, string nameA = "vectorA", string nameB = "vectorB")
+        public static IActionResult? ValidateSameLength(double[]? a, double[]? b, string nameA = "VectorA", string nameB = "VectorB")
         {
             if (a is null) return new BadRequestObjectResult($"{nameA} is required");
             if (b is null) return new BadRequestObjectResult($"{nameB} is required");
@@ -78,7 +78,7 @@ namespace MathAPI.RequestValidation
             return null;
         }
 
-        public static IActionResult? ValidateScalar(double? value, string paramName = "scalar")
+        public static IActionResult? ValidateScalar(double? value, string paramName = "Scalar")
         {
             if (value is null) return new BadRequestObjectResult($"{paramName} is required");
             return null;

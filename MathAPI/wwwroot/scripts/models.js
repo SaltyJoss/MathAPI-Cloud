@@ -52,7 +52,7 @@ async function postJson(url, payload) {
         // Handle ASP.NET validation errors properly
         if (data?.errors) {
             const fields = Object.keys(data.errors);
-            throw new Error(`Missing or invalid input: ${fields.join(", ")}`);
+            throw new Error(`Missing or invalid input => ${fields.join(", ")}`);
         }
         if (data?.message) {
             throw new Error(data.message);
@@ -159,16 +159,16 @@ function parseVector(str) {
 }
 
 async function vector(method) {
-    const A = parseVector(document.getElementById("vA").value);
-    const B = parseVector(document.getElementById("vB").value);
+    const VecA = parseVector(document.getElementById("vA").value);
+    const VecB = parseVector(document.getElementById("vB").value);
 
-    if (!A || !B) {
+    if (!VecA || !VecB) {
         const msg = "Error: invalid vector input (use comma-separated numbers).";
         writeOutput(msg);
         appendHistory(`Vector | ${method} => ${msg}`);
         return;
     }
-    if (A.length !== B.length) {
+    if (VecA.length !== VecB.length) {
         const msg = "Error: vectors must be the same length.";
         writeOutput(msg);
         appendHistory(`Vector | ${method} => ${msg}`);
@@ -176,7 +176,7 @@ async function vector(method) {
     }
 
     try {
-        const data = await postJson(`/linearalgebra/vector/${method}`, { vectorA: A, vectorB: B });
+        const data = await postJson(`/linearalgebra/vector/${method}`, { VecA, VecB });
         writeOutput(`Result: ${JSON.stringify(data.result)}`);
         appendHistory(`Vector | ${method} => ${JSON.stringify(data.result)}`);
     } catch (e) {
@@ -208,13 +208,13 @@ async function matrix(method) {
     const rawA = document.getElementById("mA").value;
     const operandType = document.getElementById("opType").value;
 
-    const matrixA = parseMatrix(rawA);
-    if (!matrixA) {
+    const MatA = parseMatrix(rawA);
+    if (!MatA) {
         writeOutput("Error: Invalid Matrix A");
         appendHistory(`Matrix | ${method} => Error: Invalid Matrix A`);
         return;
     }
-    let payload = { matrixA };  // default payload
+    let payload = { MatA };  // default payload
 
     if (method === "add") {
         if (operandType !== "matrix") {
@@ -222,7 +222,7 @@ async function matrix(method) {
             appendHistory(`Matrix | ${method} => Error: Matrix Addition requires a Matrix B`);
             return;
         }
-        payload.matrixB = parseMatrix(document.getElementById("mB").value);
+        payload.MatB = parseMatrix(document.getElementById("mB").value);
     }
 
     if (method === "multiply") {
@@ -234,7 +234,7 @@ async function matrix(method) {
                 return;
             }
         } else {
-            payload.vector = parseVector(document.getElementById("mVec").value);
+            payload.Vec = parseVector(document.getElementById("mVec").value);
         }
     }
 

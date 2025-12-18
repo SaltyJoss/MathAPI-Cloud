@@ -1,0 +1,502 @@
+window.DigitalFeedback['https://digitalfeedback.euro.confirmit.com/api/digitalfeedback/loader/prod/scenario?programKey=bIBWJz&scenarioId=12908&programVersion=99'] = function (api) {
+(function(){
+    var ctx = api();
+    function getVal(x) { if (x instanceof Function) { return x(); } return x; }
+ 
+    function userfunc4941(ctx, surveyID, containerName, cookieExpireDays, cookieExpireDaysComplete, PageViews, completesDay, nthVisitorSeed, ScenarioNumber, excludePages, showConsoleLog) {
+var DFProgramID = "2303/4941";
+var DFProgramVersion = "V1.5";
+
+var logString = "Forsta Exit Intent (Desktop) " + DFProgramVersion + ": ";
+var DFSite = "https://digitalfeedback.euro.confirmit.com/api/digitalfeedback/loader";
+var programKey = "bIBWJz";
+var nthSeed = nthVisitorSeed
+var pid = surveyID;
+var surveyCookie = "" + pid + "_done";
+var wtno = ScenarioNumber;
+
+// shouldn't need to edit below this line
+var showLog = showConsoleLog == "1" ? true : false;
+ConfirmitHelper.ConfirmitLog(showLog, logString + "nthVisitor check: " + nthSeed);
+
+// Only run for Desktop uses
+if (ConfirmitHelper.getDeviceType() == 'Desktop') {
+  ConfirmitHelper.ConfirmitLog(showLog, logString + "Desktop Detected, Continuing");
+} else {
+  ConfirmitHelper.ConfirmitLog(showLog, logString + "Non Desktop Detected, Exiting");
+  return;
+}
+
+// Only Run on these domains
+if (document.location.host === 'st1-jp.rs-online.com' || document.location.host === 'jp.rs-online.com' || document.location.host === 'st1-it.rs-online.com' || document.location.host === 'it.rs-online.com' || document.location.host === 'st1-de.rs-online.com' || document.location.host === 'de.rs-online.com' || document.location.host === 'st1-f1.rs-online.com' || document.location.host === 'fr.rs-online.com' || document.location.host === 'uk.rs-online.com' || document.location.host === 'st1-uk.rs-online.com' || document.location.host === 'st1-pl.rs-online.com' || document.location.host === 'st1-cz.rs-online.com' || document.location.host === 'st1-hu.rs-online.com' || document.location.host === 'demo.forsta.com' || document.location.href === "about:blank") {
+  ConfirmitHelper.ConfirmitLog(showLog, logString + "Correct domain, Continuing");
+} else {
+  ConfirmitHelper.ConfirmitLog(showLog, logString + "Incorrect domain, Exiting");
+  return;
+}
+
+// Do not execute on the homepage
+if (document.location.href === 'exact url') {
+  ConfirmitHelper.ConfirmitLog(showLog, logString + "Blocking initial landing page (english)");
+  return;
+}
+
+/* nth Version Check - START */
+ConfirmitHelper.ConfirmitLog(showLog, logString + "nthVisitor: START Checking Status...");
+
+// If the visitor has not been seen before then tag them
+if (!sessionStorage.getItem(surveyID + "_nth_checked")) {
+  sessionStorage.setItem(surveyID + "_nth_checked", "User Checked");
+
+  // Start to generate a session seed as one not found yet
+  ConfirmitHelper.ConfirmitLog(showLog, logString + "nthVisitor: Generating Session value - " + surveyID + "_nth");
+  ConfirmitHelper.ConfirmitLog(showLog, logString + "nthVisitor: Seed value - " + nthSeed);
+  const nthRandomNumber = Math.floor(Math.random() * 100) + 1;
+  ConfirmitHelper.ConfirmitLog(showLog, logString + "nthVisitor: nthSeed= " + nthSeed + " vs nthRandomNumber= " + nthRandomNumber);
+  if (nthRandomNumber <= nthSeed) {
+    sessionStorage.setItem(surveyID + "_nth_inScope", "nthVisitor: nthSeed= " + nthSeed + " vs nthRandomNumber= " + nthRandomNumber);
+    ConfirmitHelper.ConfirmitLog(showLog, logString + "nthVisitor: Generating session variable");
+  } else {
+    ConfirmitHelper.ConfirmitLog(showLog, logString + "nthVisitor: Random not in seed so NO session variable");
+  }
+}
+
+// If the respondent has been checked already and they are within Scope, let them pass else stop script
+if (sessionStorage.getItem(surveyID + "_nth_checked") && sessionStorage.getItem(surveyID + "_nth_inScope")) {
+  ConfirmitHelper.ConfirmitLog(showLog, logString + "nthVisitor: Already checked and in scope, continuing...");
+} else {
+  ConfirmitHelper.ConfirmitLog(showLog, logString + "nthVisitor: Already checked but not in scope, exiting...");
+  return;
+}
+ConfirmitHelper.ConfirmitLog(showLog, logString + "nthVisitor: END Checking Status...");
+/* nth Version Check - END */
+
+// 02/11/2023 - Daily quota check
+api().loadCountersAsync().then(onCountersLoaded);
+
+function onCountersLoaded(ctx) {
+  var counters = ctx.scenarioCounters(surveyID);
+  if (counters.completesCurrentDay >= completesDay) {
+    ConfirmitHelper.ConfirmitLog(showLog, logString + "Too many completes today, exiting");
+    return;
+  }
+}
+
+// 02/11/2023 - Exclude Pages
+var pageCodes = Object.getOwnPropertyNames(excludePages);
+for (var i = 0; i < pageCodes.length; i++) {
+  var pageURL = excludePages[pageCodes[i]];
+  var pattern = new RegExp(pageURL);
+  var isPage = pattern.test(document.location.href);
+  if (isPage) {
+    ConfirmitHelper.ConfirmitLog(showLog, logString + "Exclude Page found, Exiting");
+    return;
+  }
+}
+
+if (!pid) {
+  ConfirmitHelper.ConfirmitLog(showLog, logString + "Survey ID not specified.  exiting.");
+  return;
+}
+
+if (!wtno) {
+  ConfirmitHelper.ConfirmitLog(showLog, logString + "Scenario Number not specified.  exiting.");
+  return;
+}
+
+var conf_lng = ConfirmitHelper.GetSiteLang();
+
+var doNewWindow = true;
+var viewPages = PageViews ? PageViews : 0; // pages required before invite
+var doMouseExit = true;
+
+ConfirmitHelper.ConfirmitLog(showLog, logString + "Survey Cookie Name: " + surveyCookie);
+ConfirmitHelper.ConfirmitLog(showLog, logString + "Cookie Length (Days): " + cookieExpireDays);
+ConfirmitHelper.ConfirmitLog(showLog, logString + "Required Page Views: " + viewPages);
+//ConfirmitHelper.ConfirmitLog(showLog, logString + "Invite on Mouse Up (exit intent): " + doMouseExit);
+
+if (document.location.href != "about:blank") {
+  var pageCount = +sessionStorage.getItem('visited_page_count');
+  sessionStorage.setItem('visited_page_count', ++pageCount);
+  ConfirmitHelper.ConfirmitLog(showLog, logString + "Page count is  : " + pageCount);
+  ConfirmitHelper.ConfirmitLog(showLog, logString + "Page Threshold : " + PageViews);
+}
+
+var spid;
+var wt;
+
+if (window.opener) {
+  ConfirmitHelper.ConfirmitLog(showLog, logString + "** window.opener present **");
+}
+
+try {
+  spid = document.getElementById("pid").value;
+  wt = document.getElementById("wt").value;
+} catch (e) {
+  // not in confirmit popout window
+  ConfirmitHelper.ConfirmitLog(showLog, logString + "** pid or wt missing. not in confirmit out window. **");
+}
+
+if (spid && wt) {
+
+  ConfirmitHelper.ConfirmitLog(showLog, logString + "In confirmit popout window. Handle popout survey.");
+
+  var logstring = "";
+  ConfirmitHelper.ConfirmitLog(showLog, logString + "CONF - Pop Out Handler for Event Survey");
+  ConfirmitHelper.ConfirmitLog(showLog, logString + "CONF - Pop Out pid: " + spid);
+  ConfirmitHelper.ConfirmitLog(showLog, logString + "CONF - WT: " + wt);
+
+  if (wt != wtno) {
+    ConfirmitHelper.ConfirmitLog(showLog, logString + "CONF - wt: " + wt + " does not match scenario wtno: " + wtno + ".  exiting.");
+    return;
+  }
+
+  wtmatchfound = true;
+
+  var dataObject = new Object();
+  if (sessionStorage.getItem("objConfCS") != null) {
+    dataObject = JSON.parse(sessionStorage.getItem("objConfCS"));
+    ConfirmitHelper.ConfirmitLog(showLog, logString + "data object present.");
+  } else {
+    ConfirmitHelper.ConfirmitLog(showLog, logString + "data Object not present.  exiting.");
+    ConfirmitHelper.ConfirmitLog(showLog, logString + "CONF - will run window close at this point....");
+    return;
+  }
+
+  var openerDomain = window.opener.location.hostname;
+  ConfirmitHelper.ConfirmitLog(showLog, logString + "openerDomain: " + openerDomain);
+
+  var handleUnload = function () {
+
+    setTimeout(
+      function () {
+        try {
+          var openerNow = window.opener;
+          ConfirmitHelper.ConfirmitLog(showLog, logString + "window opener unload");
+          ConfirmitHelper.ConfirmitLog(showLog, logString + openerNow);
+          if (openerNow.location.hostname != openerDomain) {
+            dfInst.show();
+          } else {
+            window.opener.addEventListener("unload", handleUnload);
+          }
+        } catch (err) {
+          dfInst.show();
+          window.resizeTo(window.screen.availWidth /2, window.screen.availHeight /1.35);
+          window.focus();
+        }
+      }, 500);
+  }
+
+  let prevData = JSON.parse(sessionStorage.getItem('objConfCS'));
+  var date = new Date();
+  var now_epoc = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(),
+    date.getUTCDate(), date.getUTCHours(),
+    date.getUTCMinutes(), date.getUTCSeconds());
+
+  prevData['DF_Shown_SurveyEPOC'] = now_epoc;
+  prevData['DF_Shown_SurveyDATE'] = date;
+  sessionStorage.setItem('objConfCS', JSON.stringify(prevData));
+
+  // re-read the latest session info
+  dataObject = JSON.parse(sessionStorage.getItem("objConfCS"));
+
+  var dfInst = api();
+
+  dfInst.container('No shim');
+  dfInst.data(dataObject);
+  dfInst.survey(spid);
+
+  var confTriggerSurvey = function () {
+
+    // re-read the latest session info
+    var dataObject = JSON.parse(sessionStorage.getItem("objConfCS"));
+
+    dfInst.data(dataObject); // capture the data here
+    dfInst.show();
+    window.resizeTo(window.screen.availWidth /2, window.screen.availHeight /1.35);
+    window.focus();
+  }
+
+  try {
+    var stbtn = document.getElementById("ForstaReadyButton");
+    if (stbtn) {
+      stbtn.addEventListener("click", function () {
+
+        // Update the session info
+        let prevData = JSON.parse(sessionStorage.getItem('objConfCS'));
+        prevData['DFEventCategory'] = 2;
+
+        var date = new Date();
+        var now_epoc = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(),
+          date.getUTCDate(), date.getUTCHours(),
+          date.getUTCMinutes(), date.getUTCSeconds());
+
+        prevData['DF_Shown_SurveyEPOC'] = now_epoc;
+        prevData['DF_Shown_SurveyDATE'] = date;
+        sessionStorage.setItem('objConfCS', JSON.stringify(prevData));
+
+        confTriggerSurvey();
+        window.opener.removeEventListener("unload", handleUnload);
+      });
+    }
+  } catch (e) {
+    console.log("error with start button: " + e)
+  }
+
+  dfInst.events.closeContainer.on(
+    function () {
+      ConfirmitHelper.ConfirmitLog(showLog, logString + 'survey closed');
+      top.close();
+    });
+
+  dfInst.events.completeSurvey.on(
+    function () {
+      ConfirmitHelper.ConfirmitLog(showLog, logString + 'survey completed');
+
+      ConfirmitHelper.ConfirmitLog(showLog, logString + "Dropping Complete Cookie");
+      // Drop complete cookie
+      ConfirmitHelper.setCookie(surveyCookie, '2', {
+      path: '/',
+      expiry: cookieExpireDaysComplete * 86400,
+      secure: true,
+      samesite: 'None'
+      });
+
+      top.close();
+    });
+
+  window.opener.addEventListener("unload", handleUnload);
+
+} else {
+
+  ConfirmitHelper.ConfirmitLog(showLog, logString + "Not in popout window.");
+
+  var rdt = new Date();
+  var rno = "" + Math.random();
+  var rstr = rno.split(".")[1];
+  var fname = "doFunction" + rstr + rdt.getTime();
+
+  var wfName = "ForstaExitFunction_aq1";
+
+  ConfirmitHelper.ConfirmitLog(showLog, logString + "Function Name: " + wfName);
+
+  window[wfName] = function () {
+
+    if (sessionStorage.getItem("conftriggered")) {
+      var triggered = sessionStorage.getItem("conftriggered") == "1" ? true : false;
+
+      if (triggered) {
+        ConfirmitHelper.ConfirmitLog(showLog, logString + "triggered: " + triggered);
+        ConfirmitHelper.ConfirmitLog(showLog, logString + "previously triggered. exiting.");
+        return;
+      }
+    }
+
+    ConfirmitHelper.ConfirmitLog(showLog, logString + "pid: " + pid + " event running.");
+    ConfirmitHelper.ConfirmitLog(showLog, logString + '***show log: ' + showLog + ' ***')
+
+    if (ConfirmitHelper.getCookie(surveyCookie)) {
+      ConfirmitHelper.ConfirmitLog(showLog, logString + "" + pid + " survey cookie present.  exiting.");
+      return;
+    }
+
+    if (viewPages) {
+      if (pageCount >= (viewPages + 1)) {
+        ConfirmitHelper.ConfirmitLog(showLog, logString + "Visited " + pageCount + " page(s) while threshold is " + viewPages + " Running");
+      } else {
+        ConfirmitHelper.ConfirmitLog(showLog, logString + "Visited " + pageCount + " page(s) while threshold is " + viewPages + " Exiting");
+        return;
+      }
+    }
+
+    var pagesVisited = JSON.parse(sessionStorage.getItem('confirmitPagesVisited'));
+
+    var ds = function (ctx) {
+
+      ConfirmitHelper.ConfirmitLog(showLog, logString + "ds() triggered");
+
+      if (sessionStorage.getItem("conftriggered")) {
+        var triggered = sessionStorage.getItem("conftriggered") == "1" ? true : false;
+        // if (checkTrigger) {
+        //   ConfirmitHelper.ConfirmitLog(showLog, logString + "checkTrigger: " + checkTrigger);
+        //   ConfirmitHelper.ConfirmitLog(showLog, logString + "previously triggered. exiting..");
+        //   return;
+        // }
+      }
+
+      if (triggered) {
+        ConfirmitHelper.ConfirmitLog(showLog, logString + "" + pid + " already triggered. exiting.");
+        return;
+      }
+
+      //triggered = true;
+      sessionStorage.setItem("conftriggered", "1")
+
+      if (doNewWindow) {
+        ConfirmitHelper.ConfirmitLog(showLog, logString + "Do New Window: " + doNewWindow);
+        ctx.container(containerName);
+      }
+
+      var lang_invite = ExitIntentHelper.InviteText_DESKTOP(conf_lng);
+      ConfirmitHelper.ConfirmitLog(showLog, logString + "Invite Triggered: " + lang_invite);
+
+      ctx.survey(pid)
+      ctx.invite(lang_invite)
+      ctx.show();
+
+      // Drop invite cookie
+      ConfirmitHelper.setCookie(surveyCookie, '1', {
+        path: '/',
+        expiry: cookieExpireDays * 86400,
+        secure: true,
+        samesite: 'None'
+      });
+
+      var returnFocus;
+
+      ctx.events.showInvite.on(function (e) {
+
+        // Capture Basic Information
+        ExitIntentHelper.DataPackage("D", DFProgramID, DFProgramVersion, pageCount, pagesVisited, conf_lng);
+
+        // Capture Additional information and write to session
+        ExitIntentHelper.ExitIntentAddInfo();
+        
+        ConfirmitHelper.ConfirmitLog(showLog, logString + "Showing Invite.");
+
+        let prevData = JSON.parse(sessionStorage.getItem('objConfCS'));
+
+        var date = new Date();
+        var now_epoc = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(),
+          date.getUTCDate(), date.getUTCHours(),
+          date.getUTCMinutes(), date.getUTCSeconds());
+
+        prevData['DF_Shown_InviteEPOC'] = now_epoc;
+        prevData['DF_Shown_InviteDATE'] = date;
+        sessionStorage.setItem('objConfCS', JSON.stringify(prevData));
+
+        returnFocus = document.activeElement;
+      });
+
+      ctx.events.declineInvite.on(function () {
+        returnFocus.focus();
+      });
+
+      ctx.events.closeInvite.on(function () {
+        returnFocus.focus();
+      });
+
+      if (doNewWindow) {
+        // check if window is already open
+        if (typeof (CONFpopWindow) == 'undefined' || CONFpopWindow.closed) {
+          ConfirmitHelper.ConfirmitLog(showLog, logString + "running as popout window.");
+
+          ctx.events.showContainer.on(function () {
+
+            ConfirmitHelper.ConfirmitLog(showLog, logString + "container shown");
+
+            let prevData = JSON.parse(sessionStorage.getItem('objConfCS'));
+            var date = new Date();
+            var now_epoc = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(),
+              date.getUTCDate(), date.getUTCHours(),
+              date.getUTCMinutes(), date.getUTCSeconds());
+
+            prevData['DF_Shown_ContainerEPOC'] = now_epoc;
+            prevData['DF_Shown_ContainerDATE'] = date;
+            sessionStorage.setItem('objConfCS', JSON.stringify(prevData));
+
+            var popheight = 450;
+            var popwidth = 450;
+
+            var popleft = (screen.width - popwidth) / 2;
+            var poptop = (screen.height - popheight) / 4;
+
+            var CONFpopWindow = window.open("", "survey", "height="+popheight+","+"width="+popwidth+","+"top="+poptop+","+"left="+popleft);
+            var head = CONFpopWindow.document.head;
+            var body = CONFpopWindow.document.body;
+
+            var newScript = CONFpopWindow.document.createElement('script');
+            newScript.type = "text/javascript";
+            newScript.src = DFSite + "?programKey=" + programKey;
+            newScript.id = "cf-program-" + programKey;
+            newScript.async = "async";
+            head.appendChild(newScript);
+
+            // var mwmeta = CONFpopWindow.document.createElement("meta");
+            // mwmeta.setAttribute("name", "viewport");
+            // mwmeta.setAttribute("content", "width=device-width, initial-scale=1.0");
+            // head.appendChild(mwmeta);
+
+            var newScript2 = CONFpopWindow.document.createElement('title');
+            newScript2.text = "RS GROUP Feedback";
+            head.appendChild(newScript2);
+
+            body.innerHTML = "" + ExitIntentHelper.exitWindowText(conf_lng);
+            body.innerHTML += "<input type=hidden id='wt' value='" + wtno + "'>";
+            body.innerHTML += "<input type=hidden id='pid' value='" + pid + "'>";
+
+            var elx1 = document.getElementById('cf-mw1');
+            elx1.remove();
+
+            // Button show after 15 seconds
+            var tmptime = 15000
+            var script_tag = document.createElement('script');
+            script_tag.type = 'text/javascript';
+            script_tag.text = 'setTimeout(fnbutton, ' + tmptime + ');function fnbutton(){document.getElementsByClassName("ForstaButton")[0].style.visibility = "visible";}'
+            body.appendChild(script_tag);
+          });
+        } else {
+          ConfirmitHelper.ConfirmitLog(showLog, logString + "A window was previously opened during this session. Exiting.");
+        }
+      }
+
+      if (doNewWindow) {
+        // not handling container focus
+        ConfirmitHelper.ConfirmitLog(showLog, logString + "new window. will not trap focus ");
+      } else {
+        ConfirmitHelper.ConfirmitLog(showLog, logString + "running in modal. will do trap focus ");
+        ctx.events.showContainer.on(function () {
+          var container = document.getElementsByClassName("cf-container")[0].parentElement;
+          ConfirmitHelper.ConfirmitLog(showLog, logString + "not running manual trap focus");
+          if (!returnFocus) {
+            returnFocus = document.activeElement;
+          }
+        });
+        ctx.events.completeSurvey.on(function () {
+          returnFocus.focus();
+        });
+        ctx.events.closeContainer.on(function () {
+          returnFocus.focus();
+        });
+      }
+    }
+
+    const rptcfg = { //FOR INVITE COUNTS TO SHOW ON METRICS PAGE
+      countInvitePresented: true,
+      countInviteAccepted: true,
+      countInviteClosed: true,
+      countInviteDeclined: true
+    }
+
+    var ctx = api(rptcfg)
+      .loadCountersAsync()
+      .then(onCountersLoaded); //ONCE READY RUN CALLBACK FUNCTION
+
+    function onCountersLoaded(ctx) {
+      ConfirmitHelper.ConfirmitLog(showLog, logString + "exit intent triggered. No delay.");
+      ds(ctx);
+      //triggered = true;
+    }
+  }
+
+  window[wfName]()
+  ConfirmitHelper.ConfirmitLog(showLog, logString + "Run on page load enabled.");
+
+}
+}
+
+
+
+    userfunc4941(ctx, "p813648508288", "Exit Intent - Container Desktop", 30, 90, 3, 99999, 80, "RSGROUP_EI_001", {"1":"checkout","2":"order-confirmation","3":"basket","4":"ForwardTo","5":"co/details","6":"/login"}, true)
+})();
+};

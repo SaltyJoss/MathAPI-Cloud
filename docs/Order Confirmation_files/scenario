@@ -1,0 +1,242 @@
+window.DigitalFeedback['https://digitalfeedback.euro.confirmit.com/api/digitalfeedback/loader/prod/scenario?programKey=bIBWJz&scenarioId=13677&programVersion=99'] = function (api) {
+(function(){
+    var ctx = api();
+    function getVal(x) { if (x instanceof Function) { return x(); } return x; }
+ 
+    function userfunc5235(ctx, MySurvey, MyContainer, MyInvite, includePages, SlideOut, cookieExpiration, cookieExpiration_closeclick, showConsoleLog) {
+var showLog = showConsoleLog == 1 ? true : false; // show console log
+var DFProgramID = "2303/5235"; // source data information
+var DFProgramVersion = "v1.2"; // script information
+var logString = "Persistent Feedback (Checkout Page): " + DFProgramVersion + " "; // prefix console log entries
+var cookieName = MySurvey + "_Web_Checkout_Area"; // cookie name to track when to show the invite next time
+
+// Check for Cookie Drop
+if (ConfirmitHelper.getCookie(cookieName)) {
+  ConfirmitHelper.ConfirmitLog(showLog, logString + MySurvey + " survey cookie present, exiting as within cookie expiration");
+  return;
+}
+
+// Only run for Desktop uses
+if (ConfirmitHelper.getDeviceType() == 'Desktop') {
+  ConfirmitHelper.ConfirmitLog(showLog, logString + "Desktop Detected, Continuing");
+} else {
+  ConfirmitHelper.ConfirmitLog(showLog, logString + "Non Desktop Detected, Exiting");
+  return;
+}
+
+// Only run on the following domains
+if (document.location.host === 'uk.rs-online.com' || document.location.host === 'st1-uk.rs-online.com' || document.location.host === 'it.rs-online.com' || document.location.host === 'st1-it.rs-online.com' || document.location.host === 'sg.rs-online.com' || document.location.host === 'st1-sg.rs-online.com' || document.location.host === 'es.rs-online.com' || document.location.host === 'st1-es.rs-online.com' || document.location.host === 'fr.rs-online.com' || document.location.host === 'st1-f1.rs-online.com' || document.location.host === 'de.rs-online.com' || document.location.host === 'st1-de.rs-online.com' || document.location.host === 'at.rs-online.com' || document.location.host === 'st1-at.rs-online.com' || document.location.host === 'hken.rs-online.com' || document.location.host === 'st1-hk01.rs-online.com' || document.location.host === 'hkcn.rs-online.com' || document.location.host === 'st1-hk02.rs-online.com' || document.location.host === 'twen.rs-online.com' || document.location.host === 'st1-tw01.rs-online.com' || document.location.host === 'jp.rs-online.com' || document.location.host === 'st1-jp.rs-online.com'|| document.location.host === 'ph.rs-online.com' || document.location.host === 'st1-ph.rs-online.com' || document.location.host === 'st1-sg.rs-online.com' || document.location.host === 'sg.rs-online.com'  || document.location.host === 'th.rs-online.com' || document.location.host === 'st1-th.rs-online.com' || document.location.host === 'st1-my.rs-online.com' || document.location.host === 'my.rs-online.com' || document.location.host === 'no.rs-online.com' || document.location.host === 'st1-no.rs-online.com' || document.location.host === 'se.rs-online.com' || document.location.host === 'st1-se.rs-online.com' ||document.location.host === 'dk.rs-online.com' || document.location.host === 'st1-dk.rs-online.com' ||document.location.host === 'pt.rs-online.com' || document.location.host === 'st1-pt.rs-online.com' ||document.location.host === 'es.rs-online.com' || document.location.host === 'st1-es.rs-online.com' ||document.location.host === 'befr.rs-online.com' || document.location.host === 'st1-be01.rs-online.com' ||document.location.host === 'benl.rs-online.com' || document.location.host === 'st1-be02.rs-online.com' ||document.location.host === 'nl.rs-online.com' || document.location.host === 'st1-nl.rs-online.com' ||document.location.host === 'hu.rs-online.com' || document.location.host === 'st1-hu.rs-online.com' ||document.location.host === 'cz.rs-online.com' || document.location.host === 'st1-cz.rs-online.com' ||document.location.host === 'pl.rs-online.com' || document.location.host === 'st1-pl.rs-online.com' || document.location.host === 'za.rs-online.com' || document.location.host === 'st1-za.rs-online.com' || document.location.host === 'demo.forsta.com') {
+  ConfirmitHelper.ConfirmitLog(showLog, logString + "Correct domain, continuing");
+} else {
+  ConfirmitHelper.ConfirmitLog(showLog, logString + "Incorrect domain, exiting");
+  return;
+}
+
+// Include pages
+var pageCodes = Object.getOwnPropertyNames(includePages);
+for (var i = 0; i < pageCodes.length; i++) {
+
+  var pageURL = includePages[pageCodes[i]];
+  var pattern = new RegExp(pageURL);
+  var isPage = pattern.test(document.location.href);
+
+  if (isPage) {
+
+    ConfirmitHelper.ConfirmitLog(showLog, logString + "Witing for " + SlideOut + " seconds to trigger invite");
+
+    setTimeout(function() {
+
+      ConfirmitHelper.ConfirmitLog(showLog, logString + "Correct page location, continuing");
+      var dObj = {};
+      setData(dObj);
+
+      var ctx = api();
+          ctx.container(MyContainer);
+          ctx.survey(MySurvey);
+          ctx.invite(MyInvite);
+          ctx.data(dObj);
+
+          ctx.show();
+
+      ctx.events.showInvite.on(function () {  
+
+        ConfirmitHelper.ConfirmitLog(showLog, logString + "Invite Shown");
+        ConfirmitHelper.setCookie(cookieName, "1", { path: '/', expiry: parseInt(cookieExpiration), secure: true, samesite: 'None' });
+        ConfirmitHelper.ConfirmitLog(showLog, logString + ": Cookie Dropped - " + cookieName + " Time Delay (seconds): " + cookieExpiration);
+
+        ConfirmitHelper.ConfirmitLog(showLog, logString + "Customising Invite Text...");
+
+        // Get language from website (retuns array [website lang, Forsta lang])
+        var FLang = window.getLang();
+        var SiteLang = FLang[0]; // Get the site lang
+
+        ConfirmitHelper.ConfirmitLog(showLog, logString + "Lang: " + FLang);
+        // Check the lang and customise invite layout (some languages are 2 letter codes so also check that too).
+        // If no language detected then text within the invite will be used
+        if (SiteLang.toLowerCase() == 'en-gb') {
+          // No customisation
+        }else if(SiteLang.toLowerCase() =='es-es' || SiteLang.toLowerCase() =='es'){
+          document.querySelector("#RSText").innerText = "Comentario?";
+          document.querySelector("#RSText").style.fontSize = "16px";
+
+        }else if(SiteLang.toLowerCase() =='en-au'){
+          document.querySelector("#RSText").innerText = "Feedback?";
+          document.querySelector("#RSText").style.fontSize = "14px";
+
+        }else if(SiteLang.toLowerCase() =='sv-se'){
+          document.querySelector("#RSText").innerText = "Feed-back?";
+          document.querySelector("#RSText").style.fontSize = "14px";
+
+        }else if(SiteLang.toLowerCase() =='da-dk'){
+          document.querySelector("#RSText").innerText = "Feedback?";
+          document.querySelector("#RSText").style.fontSize = "14px";
+        
+        }else if(SiteLang.toLowerCase() =='no-no' || SiteLang.toLowerCase() =='no'){
+          document.querySelector("#RSText").innerText = "Feedback?";
+          document.querySelector("#RSText").style.fontSize = "14px";
+
+          }else if(SiteLang.toLowerCase() =='it-it' || SiteLang.toLowerCase() =='i'){
+          document.querySelector("#RSText").innerText = "Feedback?";
+          document.querySelector("#RSText").style.fontSize = "14px";
+        
+        }else if(SiteLang.toLowerCase() =='pt-pt'){
+          document.querySelector("#RSText").innerText = "Opinião?";
+          document.querySelector("#RSText").style.fontSize = "14px";
+        }
+        else if(SiteLang.toLowerCase() =='en-au'){
+          document.querySelector("#RSText").innerText = "Feedback?";
+          document.querySelector("#RSText").style.fontSize = "14px";
+        }
+         else if(SiteLang.toLowerCase() =='cz-cz'){
+          document.querySelector("#RSText").innerText = "Zpětná vazba?";
+          document.querySelector("#RSText").style.fontSize = "14px";
+        }
+         else if(SiteLang.toLowerCase() =='hu-hu'){
+          document.querySelector("#RSText").innerText = "Visszajelzés?";
+          document.querySelector("#RSText").style.fontSize = "14px";
+        }
+        else if(SiteLang.toLowerCase() =='ja-jp'){
+          document.querySelector("#RSText").innerText = "フィードバック?";
+          document.querySelector("#RSText").style.fontSize = "14px";
+        }
+        else if(SiteLang.toLowerCase() =='nl-be'){
+          document.querySelector("#RSText").innerText = "feedback?";
+          document.querySelector("#RSText").style.fontSize = "14px";
+        }
+        else if(SiteLang.toLowerCase() =='nl-nl'){
+          document.querySelector("#RSText").innerText = "feedback?";
+          document.querySelector("#RSText").style.fontSize = "14px";
+        }
+        else if(SiteLang.toLowerCase() =='pl-pl'){
+          document.querySelector("#RSText").innerText = "Opinia zwrotna?";
+          document.querySelector("#RSText").style.fontSize = "14px";
+        }
+        else if (SiteLang.toLowerCase() == 'th-th') {
+          document.querySelector("#RSText").innerText = "ข้อเสนอแนะ?";
+          document.querySelector("#RSText").style.fontSize = "14px";
+        }
+        else if (SiteLang.toLowerCase() == 'zh-cn') {
+          document.querySelector("#RSText").innerText = "反馈?";
+          document.querySelector("#RSText").style.fontSize = "14px";
+        }
+        else if (SiteLang.toLowerCase() == 'zh-tw') {
+          document.querySelector("#RSText").innerText = "反饋?";
+          document.querySelector("#RSText").style.fontSize = "14px";
+        }
+        else if (SiteLang.toLowerCase() == 'fr-fr') {
+          document.querySelector("#RSText").innerText = "Retour?";
+          document.querySelector("#RSText").style.fontSize = "14px";
+        }
+        else if (SiteLang.toLowerCase() == 'fr-be') {
+          document.querySelector("#RSText").innerText = "Retour?";
+          document.querySelector("#RSText").style.fontSize = "14px";
+        }
+        else if (SiteLang.toLowerCase() == 'de-de') {
+          document.querySelector("#RSText").innerText = "Rückmeldung?";
+          document.querySelector("#RSText").style.fontSize = "14px";
+        }
+        else if (SiteLang.toLowerCase() == 'de-ch') {
+          document.querySelector("#RSText").innerText = "Rückmeldung?";
+          document.querySelector("#RSText").style.fontSize = "14px";
+        }
+        else if (SiteLang.toLowerCase() == 'de-at') {
+          document.querySelector("#RSText").innerText = "Rückmeldung?";
+          document.querySelector("#RSText").style.fontSize = "14px";
+        }
+      })
+
+      ctx.events.closeContainer.on(function () {
+        ConfirmitHelper.ConfirmitLog(showLog, logString + "Container Closed by Respondent");
+        ConfirmitHelper.setCookie(cookieName, "1", { path: '/', expiry: parseInt(cookieExpiration_closeclick), secure: true, samesite: 'None' });
+        ConfirmitHelper.ConfirmitLog(showLog, logString + ": Cookie Dropped - " + cookieName + " Time Delay (seconds): " + cookieExpiration_closeclick);
+      }); 
+
+      // Allow Enter or Space Key to Trigger Tab
+      setTimeout(function() {
+        // Allow Enter or Space Key to Trigger Tab
+        var my_div = document.getElementsByClassName('cf-invite__button')[0];
+
+        my_div.addEventListener('keyup', event => {
+          if (event.code === 'Space') {
+            //console.log('Space pressed')
+            my_div.click();
+          }
+        })
+
+        my_div.addEventListener('keyup', event => {
+          if (event.keyCode === 13) {
+            //console.log('Enter pressed')
+            my_div.click();
+          }
+        })
+
+      }, 500);
+
+    }, SlideOut * 1000);
+
+    break;
+
+  }else{
+    ConfirmitHelper.ConfirmitLog(showLog, logString + "INCORRECT page location, exiting");
+  }
+}
+
+function setData(dObj){
+
+  //Get language from website
+  var FLang = window.getLang();
+  ConfirmitHelper.ConfirmitLog(showLog, logString + "FLang: " + FLang);
+
+  dObj.DFSiteLanguage = FLang[0];
+  dObj.l = FLang[1];
+  dObj.DFID = DFProgramID;
+  dObj.DFVersion = DFProgramVersion;
+  dObj.DFSource = "Web_Checkout_Area";
+
+  dObj.DFPageRef = document.referrer;
+  dObj.DFPageURL = document.location.href.toLowerCase();
+  dObj.DFHost = document.location.host,
+
+  dObj.DFuws_visitor_id = sessionStorage.getItem("uws_visitor_id");
+  dObj.DFpathname = location.pathname;
+
+  dObj.DFScreenWidth = window.screen.width;
+  dObj.DFScreenHeight = window.screen.height;
+  dObj.DFScreenisExtended = window.screen.isExtended
+  dObj.DFScreenOrientation = window.screen.orientation.type        
+  dObj.DFScreenViewportWidth = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)             		
+  dObj.DFScreenViewportHeight = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0)             		     
+  dObj.DFdpr = window.devicePixelRatio
+  dObj.DFuws_prop_Entry_Page = ConfirmitHelper.getCookie("uws_prop_Entry_Page")          
+  dObj.DFuws_visited_pages = sessionStorage.getItem("uws_visited_pages");
+
+  // Log out the data package for debug
+  ConfirmitHelper.ConfirmitLog(showLog,logString + "Data: " + JSON.stringify(dObj));
+}
+}
+
+
+
+    userfunc5235(ctx, "p684376332320", "Persistent Feedback - Container (Checkout)", "Persistent feedback - Checkout page", {"1":"/co/details","2":"/co/payment/","3":"/co/review","4":"/web/co/details/","5":"/web/co/payment/","6":"/web/co/review","7":"/web/sc/quotes/"}, 10, -1, -1, true)
+})();
+};
