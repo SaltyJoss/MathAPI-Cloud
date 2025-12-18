@@ -43,7 +43,7 @@ namespace MathAPI.RequestValidation
             {
                 if (M[i] is null) return new BadRequestObjectResult($"{paramName}[{i}] is null");
                 if (M[i].Length != cols)
-                    return new BadRequestObjectResult($"{paramName} must be sqaure(row {i} length differs).");
+                    return new BadRequestObjectResult($"{paramName} must be sqaure (row {i} length differs).");
             }
 
             return null;

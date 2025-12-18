@@ -27,7 +27,7 @@ namespace MathAPI.Controllers
             if (errA is not null) return errA;
 
             if (request.Vec is null) return BadRequest(new { error = "Vector is required for multiplication operations." });
-            var errV = RequestValidator.ValidateVector(request.Vec, "Vector");
+            var errV = RequestValidator.ValidateVector(request.Vec, "Vec");
             if (errV is not null) return errV;
 
             var result = LinearAlgebra.MultiplyMatrixByVector(request.MatA!, request.Vec!).ToArray();
